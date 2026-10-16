@@ -3,8 +3,8 @@
 // ============================================================
 window.FASKES_CONFIG = {
     namaFaskes: "Puskesmas Lok Bahu",
-    namaPetugas: "Petugas Kesehatan Jiwa Puskesmas Lok Bahu",
-    nomorWA: "6285171172121",
+    namaPetugas: "Moh. Mukhlis Noor, A.Md.Kep.",
+    nomorWA: "6281250067557",
     alamat: "Jl. Ir. H. Nusyirwan Ismail, M.Si. (Ring Road 2) RT. 15 (Belakang SMKN 15), Kelurahan Lok Bahu, Kecamatan Sungai Kunjang, Kota Samarinda, Kalimantan Timur 75129",
     jamLayanan: "Senin \u2013 Sabtu, 07.30 \u2013 12.00 WITA",
     gasEndpointURL: "",

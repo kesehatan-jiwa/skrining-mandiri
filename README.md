@@ -74,8 +74,8 @@ Semua pengaturan puskesmas dan kontak terpusat di `assets/js/config.js`:
 ```javascript
 window.FASKES_CONFIG = {
     namaFaskes: "Puskesmas Lok Bahu",
-    namaPetugas: "Petugas Kesehatan Jiwa Puskesmas Lok Bahu",
-    nomorWA: "6285171172121",
+    namaPetugas: "Moh. Mukhlis Noor, A.Md.Kep.",
+    nomorWA: "6281250067557",
     alamat: "Jl. Ir. H. Nusyirwan Ismail, M.Si. (Ring Road 2) RT. 15...",
     jamLayanan: "Senin – Sabtu, 07.30 – 12.00 WITA",
     gasEndpointURL: "URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI"
