@@ -7,7 +7,7 @@ window.FASKES_CONFIG = {
     nomorWA: "6281250067557",
     alamat: "Jl. Ir. H. Nusyirwan Ismail, M.Si. (Ring Road 2) RT. 15 (Belakang SMKN 15), Kelurahan Lok Bahu, Kecamatan Sungai Kunjang, Kota Samarinda, Kalimantan Timur 75129",
     jamLayanan: "Senin \u2013 Sabtu, 07.30 \u2013 12.00 WITA",
-    gasEndpointURL: "",
+    gasEndpointURL: "https://script.google.com/macros/s/AKfycbzyxah5PC0Vu4jRvU3i09WZDmgRJxVV6bNxQtCatFRJyt3IQ1WsnrnBqsGF1zMFq8nXOQ/exec",
 
     labelInstrumen: {
         phq4:     "PHQ-4 (Dewasa Umum)",
