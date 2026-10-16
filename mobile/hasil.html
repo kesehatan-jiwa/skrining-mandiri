@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hasil Skrining Kesehatan Jiwa — Puskesmas Lok Bahu</title>
     <link rel="stylesheet" href="../assets/css/mobile.css">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -11,123 +11,261 @@
 </head>
 <body x-data="mobileHasil()" x-init="init()">
 
-    <!-- MOBILE HEADER -->
+    <!-- ── STICKY HEADER ────────────────────────────────────── -->
     <div class="mobile-header">
         <div class="mobile-brand">
-            <img src="../assets/img/logopuskesmas.png" alt="Logo" style="height:24px;width:auto;object-fit:contain;margin-right:6px;background:rgba(255,255,255,0.9);padding:2px 4px;border-radius:4px">
+            <img src="../assets/img/logopuskesmas.png" alt="Logo"
+                 style="height:22px;width:auto;object-fit:contain;background:rgba(255,255,255,.9);padding:2px 5px;border-radius:5px">
             Hasil Skrining
         </div>
-        <button x-show="dataSkrining" onclick="window.print()" style="color:rgba(255,255,255,.9);font-size:.78rem;background:rgba(255,255,255,0.18);border:none;cursor:pointer;padding:4px 10px;border-radius:6px">🖨 Cetak PDF</button>
+        <button x-show="dataSkrining" onclick="window.print()" class="mobile-header-action">🖨 Cetak PDF</button>
     </div>
 
-    <!-- EMPTY STATE JIKA BELUM ADA DATA -->
-    <div x-show="!dataSkrining" class="content" style="text-align:center;padding:3rem 1.5rem">
-        <div style="width:56px;height:56px;border-radius:14px;background:var(--indigo-100);color:var(--indigo-600);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- EMPTY STATE                                            -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div x-show="!dataSkrining" class="content" style="text-align:center;padding:3.5rem 1.5rem">
+        <div style="width:60px;height:60px;border-radius:18px;background:var(--indigo-100);color:var(--indigo-600);display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem">
+            <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
         </div>
-        <h3 style="font-size:1.15rem;font-weight:700;color:var(--gray-800);margin-bottom:.4rem">Belum Ada Riwayat Skrining</h3>
-        <p style="font-size:.82rem;color:var(--gray-500);line-height:1.5;margin-bottom:1.25rem">Anda belum mengisi kuesioner kesehatan jiwa pada sesi browser ini. Silakan mulai skrining mandiri.</p>
+        <h3 style="font-size:1.15rem;font-weight:800;color:var(--gray-800);margin-bottom:.45rem">Belum Ada Hasil Skrining</h3>
+        <p style="font-size:.82rem;color:var(--gray-500);line-height:1.6;margin-bottom:1.5rem">
+            Anda belum mengisi kuesioner kesehatan jiwa pada sesi browser ini.<br>Silakan mulai skrining mandiri.
+        </p>
         <a href="index.html" class="btn btn-primary btn-block">Mulai Skrining Mandiri →</a>
     </div>
 
-    <!-- HASIL KONTEN -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- HASIL KONTEN                                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
     <template x-if="dataSkrining">
         <div>
-            <!-- HERO HASIL -->
+
+            <!-- KOP SURAT PRINT ONLY -->
+            <div class="print-kop">
+                <div class="print-kop-inner">
+                    <img src="../assets/img/logopuskesmas.png" alt="Logo" style="height:50px;width:auto">
+                    <div>
+                        <h2>UPTD Puskesmas Lok Bahu</h2>
+                        <p>Jl. Ir. H. Nusyirwan Ismail, M.Si. (Ring Road 2) RT. 15, Kel. Lok Bahu, Kec. Sungai Kunjang, Samarinda 75129</p>
+                        <p>Layanan Jiwa: Senin–Sabtu, 07.30–12.00 WITA • WA: +62 851-7117-2121</p>
+                    </div>
+                </div>
+                <h3 style="font-size:11pt;font-weight:800;margin-top:10px;color:var(--indigo-900)">LEMBAR HASIL SKRINING KESEHATAN JIWA MANDIRI</h3>
+                <p style="font-size:8pt;color:#6b7280" x-text="'Waktu Pemeriksaan: ' + tglSkrining + ' | Instrumen: ' + (hasil.instrumenLabel || '-')"></p>
+            </div>
+
+            <!-- ── HERO IDENTITAS ──────────────────────────── -->
             <div class="hasil-hero">
-                <div class="hasil-badge-top" x-text="hasil.instrumenLabel||'-'"></div>
-                <div class="hasil-name" x-text="dp.nama||'Pasien'"></div>
-                <div class="hasil-meta" x-text="(dp.usia||'-')+' tahun • '+(dp.jenisKelamin==='L'?'Laki-laki':'Perempuan')"></div>
-                <div class="hasil-meta" x-text="'Pemeriksaan: '+tglSkrining"></div>
+                <div class="hasil-badge-top" x-text="hasil.instrumenLabel || 'Skrining Klinis'"></div>
+                <div class="hasil-name" x-text="dp.nama || 'Responden'"></div>
+                <div class="hasil-meta" x-text="(dp.usia || '-') + ' tahun • ' + (dp.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan')"></div>
+                <div class="hasil-meta" x-text="'Pemeriksaan: ' + tglSkrining"></div>
             </div>
 
             <div class="content">
 
-                <!-- ALERT Q10 EPDS -->
+                <!-- ── ALERT Q10 EPDS ──────────────────────── -->
                 <template x-if="hasil.instrumen==='epds' && hasil.q10Positif">
-                    <div style="background:#fee2e2;border:2px solid #ef4444;border-radius:var(--radius-sm);padding:.85rem;margin-bottom:1rem">
-                        <div style="font-weight:800;color:#991b1b;font-size:.85rem;margin-bottom:.25rem">⚠️ PERHATIAN — RUJUKAN SEGERA</div>
-                        <div style="font-size:.78rem;color:#b91c1c;line-height:1.4">Terdapat indikasi pikiran mencelakai diri sendiri (EPDS No. 10). Segera hubungi petugas Puskesmas Lok Bahu.</div>
+                    <div class="alert-bahaya-m">
+                        <div class="alert-bahaya-title">⚠️ PERHATIAN — RUJUKAN SEGERA DIPERLUKAN</div>
+                        <div class="alert-bahaya-desc">
+                            Terdapat indikasi pikiran mencelakai diri sendiri (EPDS No. 10 positif). Segera hubungi petugas Puskesmas Lok Bahu atau datang langsung.
+                        </div>
                     </div>
                 </template>
 
-                <!-- PHQ-4 GAUGE -->
+                <!-- ── STATUS CARD ─────────────────────────── -->
+                <div class="status-card-m" :class="hasil.berisiko ? 'berisiko' : 'aman'">
+                    <div class="status-icon-m">
+                        <span x-text="hasil.berisiko ? '⚠️' : '✅'" style="font-size:1.5rem"></span>
+                    </div>
+                    <div>
+                        <div class="status-badge-pill-m" :class="hasil.berisiko ? 'merah' : 'hijau'"
+                             x-text="hasil.berisiko ? 'STATUS: BERISIKO' : 'STATUS: TIDAK BERISIKO'"></div>
+                        <div class="status-title-m" x-text="hasil.ringkasan || 'Hasil Skrining'"></div>
+                        <div class="status-desc-m" x-text="hasil.berisiko
+                            ? 'Terindikasi gejala yang memerlukan perhatian lebih lanjut dari petugas kesehatan.'
+                            : 'Tidak terdeteksi indikasi gangguan psikologis yang signifikan saat ini.'">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── PHQ-4 GAUGE ─────────────────────────── -->
                 <template x-if="hasil.instrumen==='phq4'">
-                    <div class="card" style="padding:1.25rem;margin-bottom:1rem;text-align:center">
-                        <div style="font-size:.8rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;margin-bottom:1rem">Skor Skrining PHQ-4</div>
-                        <div style="display:flex;justify-content:space-around;gap:.75rem">
-                            <div>
-                                <div style="font-size:.75rem;font-weight:700;color:var(--gray-500);margin-bottom:.4rem">PHQ-2 Depresi</div>
-                                <div style="font-size:1.75rem;font-weight:800" :style="'color:'+(hasil.hasilDepresi?.level==='danger'?'#ef4444':hasil.hasilDepresi?.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.skorDepresi"></div>
-                                <div style="font-size:.7rem;color:var(--gray-400)">/ 6 skor</div>
-                                <div style="font-size:.75rem;font-weight:600;margin-top:.3rem" x-text="hasil.hasilDepresi?.label"></div>
+                    <div class="gauge-card-m">
+                        <div class="gauge-card-title">Visualisasi Skor PHQ-4</div>
+                        <div class="gauge-scores-wrap">
+                            <div class="gauge-score-col">
+                                <div style="font-size:.72rem;font-weight:700;color:var(--gray-400);margin-bottom:.35rem">PHQ-2 Depresi</div>
+                                <div class="gauge-score-num"
+                                     :style="'color:'+(hasil.hasilDepresi?.level==='danger'?'#ef4444':hasil.hasilDepresi?.level==='warning'?'#f59e0b':'#10b981')"
+                                     x-text="hasil.skorDepresi"></div>
+                                <div class="gauge-score-max">/ 6 skor</div>
+                                <div class="level-pill" :class="hasil.hasilDepresi?.level" x-text="hasil.hasilDepresi?.level==='normal'?'Normal':hasil.hasilDepresi?.level==='warning'?'Berisiko':'Tinggi'"></div>
+                                <div class="gauge-score-cut">Cut-off ≥ 3</div>
                             </div>
-                            <div style="width:1px;background:var(--gray-200)"></div>
-                            <div>
-                                <div style="font-size:.75rem;font-weight:700;color:var(--gray-500);margin-bottom:.4rem">GAD-2 Cemas</div>
-                                <div style="font-size:1.75rem;font-weight:800" :style="'color:'+(hasil.hasilKecemasan?.level==='danger'?'#ef4444':hasil.hasilKecemasan?.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.skorKecemasan"></div>
-                                <div style="font-size:.7rem;color:var(--gray-400)">/ 6 skor</div>
-                                <div style="font-size:.75rem;font-weight:600;margin-top:.3rem" x-text="hasil.hasilKecemasan?.label"></div>
+                            <div class="gauge-score-divider"></div>
+                            <div class="gauge-score-col">
+                                <div style="font-size:.72rem;font-weight:700;color:var(--gray-400);margin-bottom:.35rem">GAD-2 Kecemasan</div>
+                                <div class="gauge-score-num"
+                                     :style="'color:'+(hasil.hasilKecemasan?.level==='danger'?'#ef4444':hasil.hasilKecemasan?.level==='warning'?'#f59e0b':'#10b981')"
+                                     x-text="hasil.skorKecemasan"></div>
+                                <div class="gauge-score-max">/ 6 skor</div>
+                                <div class="level-pill" :class="hasil.hasilKecemasan?.level" x-text="hasil.hasilKecemasan?.level==='normal'?'Normal':hasil.hasilKecemasan?.level==='warning'?'Berisiko':'Tinggi'"></div>
+                                <div class="gauge-score-cut">Cut-off ≥ 3</div>
                             </div>
+                        </div>
+                        <div style="margin-top:.85rem;background:var(--gray-50);border-radius:var(--radius-xs);padding:.65rem .8rem">
+                            <div style="font-size:.72rem;font-weight:700;color:var(--gray-500);margin-bottom:.2rem">Interpretasi Sub-skala Depresi:</div>
+                            <div style="font-size:.8rem;color:var(--gray-700)" x-text="hasil.hasilDepresi?.label"></div>
+                            <div style="font-size:.72rem;font-weight:700;color:var(--gray-500);margin:8px 0 2px">Interpretasi Sub-skala Kecemasan:</div>
+                            <div style="font-size:.8rem;color:var(--gray-700)" x-text="hasil.hasilKecemasan?.label"></div>
                         </div>
                     </div>
                 </template>
 
-                <!-- EPDS GAUGE -->
+                <!-- ── EPDS GAUGE ──────────────────────────── -->
                 <template x-if="hasil.instrumen==='epds'">
-                    <div class="card" style="padding:1.25rem;margin-bottom:1rem;text-align:center">
-                        <div style="font-size:.8rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;margin-bottom:.6rem">Skor Total EPDS</div>
-                        <div style="font-size:2.25rem;font-weight:800" :style="'color:'+(hasil.level==='danger'?'#ef4444':hasil.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.totalSkor"></div>
-                        <div style="font-size:.72rem;color:var(--gray-400)">/ 30 skor maksimal</div>
-                        <div style="font-size:.85rem;font-weight:700;margin-top:.4rem" :style="'color:'+(hasil.level==='danger'?'#ef4444':hasil.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.interpretasi"></div>
-                    </div>
-                </template>
-
-                <!-- MINDHEAR -->
-                <template x-if="hasil.instrumen==='mindhear'">
-                    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
-                        <div style="font-size:.8rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;margin-bottom:.8rem;text-align:center">Hasil Mini MINDHEAR</div>
-                        <div style="display:flex;flex-direction:column;gap:.6rem">
-                            <div style="padding:.65rem;border-radius:8px;background:var(--indigo-50);display:flex;justify-content:space-between;align-items:center">
-                                <span style="font-size:.8rem;font-weight:600">Skala A — Ansietas</span>
-                                <span style="font-size:.8rem;font-weight:700" x-text="hasil.hasilAnsietas?.label"></span>
-                            </div>
-                            <div style="padding:.65rem;border-radius:8px;background:var(--violet-50);display:flex;justify-content:space-between;align-items:center">
-                                <span style="font-size:.8rem;font-weight:600">Skala B — Depresi</span>
-                                <span style="font-size:.8rem;font-weight:700" x-text="hasil.hasilDepresi?.label"></span>
-                            </div>
+                    <div class="gauge-card-m">
+                        <div class="gauge-card-title">Skor Total EPDS</div>
+                        <div class="gauge-epds-total">
+                            <div class="gauge-epds-num"
+                                 :style="'color:'+(hasil.level==='danger'?'#ef4444':hasil.level==='warning'?'#f59e0b':'#10b981')"
+                                 x-text="hasil.totalSkor"></div>
+                            <div class="gauge-epds-max">dari 30 skor maksimal</div>
+                            <div class="level-pill" :class="hasil.level" x-text="hasil.interpretasi"></div>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:.85rem;font-size:.7rem;color:var(--gray-400);text-align:center;justify-content:center">
+                            <span>Skor &lt; 9: Rendah</span>
+                            <span>•</span>
+                            <span>9–11: Perlu Pantauan</span>
+                            <span>•</span>
+                            <span>≥ 12: Depresi</span>
+                        </div>
+                        <div style="margin-top:.85rem;background:var(--gray-50);border-radius:var(--radius-xs);padding:.65rem .8rem">
+                            <div style="font-size:.72rem;font-weight:700;color:var(--gray-500);margin-bottom:.25rem">Tindak Lanjut:</div>
+                            <div style="font-size:.8rem;color:var(--gray-700);line-height:1.5" x-text="hasil.penatalaksanaan"></div>
                         </div>
                     </div>
                 </template>
 
-                <!-- STATUS KESIMPULAN -->
-                <div class="interp-card" style="margin-bottom:1rem">
-                    <div class="interp-badge" :class="hasil.berisiko ? 'warning' : 'normal'">
-                        <span x-text="hasil.berisiko ? 'HASIL: BERISIKO (PERLU KONSULTASI)' : 'HASIL: TIDAK BERISIKO'"></span>
+                <!-- ── MINDHEAR HASIL ──────────────────────── -->
+                <template x-if="hasil.instrumen==='mindhear'">
+                    <div class="gauge-card-m">
+                        <div class="gauge-card-title" x-text="'Hasil Mini MINDHEAR' + (hasil.kelompokUsia ? ' (Usia ' + hasil.kelompokUsia + ' Th)' : '')"></div>
+                        <div class="mindhear-scales-m">
+                            <div class="mindhear-scale-row ansietas">
+                                <span class="mindhear-scale-key">Skala A — Ansietas / Cemas</span>
+                                <span class="level-pill" :class="hasil.hasilAnsietas?.level" x-text="hasil.hasilAnsietas?.level==='normal'?'Normal':hasil.hasilAnsietas?.level==='warning'?'Ringan':'Berat'"></span>
+                            </div>
+                            <div style="font-size:.75rem;color:var(--gray-500);padding:0 .5rem" x-text="hasil.hasilAnsietas?.label"></div>
+                            <div class="mindhear-scale-row depresi" style="margin-top:.35rem">
+                                <span class="mindhear-scale-key">Skala B — Depresi / Murung</span>
+                                <span class="level-pill" :class="hasil.hasilDepresi?.level" x-text="hasil.hasilDepresi?.level==='normal'?'Normal':hasil.hasilDepresi?.level==='warning'?'Ringan':'Berat'"></span>
+                            </div>
+                            <div style="font-size:.75rem;color:var(--gray-500);padding:0 .5rem" x-text="hasil.hasilDepresi?.label"></div>
+                        </div>
                     </div>
-                    <div style="font-size:.82rem;color:var(--gray-700);line-height:1.5;margin-top:.5rem" x-text="hasil.ringkasan"></div>
-                </div>
+                </template>
 
-                <!-- RINGKASAN DATA -->
-                <div class="card" style="margin-bottom:1.25rem">
+                <!-- ── REKOMENDASI ─────────────────────────── -->
+                <div class="card">
                     <div class="card-header">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-                        Ringkasan Data Pasien
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        Rekomendasi Tindak Lanjut
                     </div>
-                    <div class="card-body" style="padding:.75rem 1rem">
-                        <div class="data-row-m"><span class="data-key-m">Nama</span><span class="data-val-m" x-text="dp.nama||'-'"></span></div>
-                        <div class="data-row-m"><span class="data-key-m">NIK</span><span class="data-val-m" x-text="dp.nik||'-'"></span></div>
-                        <div class="data-row-m"><span class="data-key-m">Tanggal Lahir</span><span class="data-val-m" x-text="(dp.tanggalLahir||'-') + ' (' + (dp.usia||'-') + ' th)'"></span></div>
-                        <div class="data-row-m"><span class="data-key-m">Jenis Kelamin</span><span class="data-val-m" x-text="dp.jenisKelamin==='L'?'Laki-laki':'Perempuan'"></span></div>
-                        <div class="data-row-m"><span class="data-key-m">No. WhatsApp</span><span class="data-val-m" x-text="dp.noHp||'-'"></span></div>
-                        <div class="data-row-m" x-show="dp.alamat"><span class="data-key-m">Alamat</span><span class="data-val-m" x-text="dp.alamat"></span></div>
+                    <div class="card-body">
+                        <div class="rec-list-m">
+                            <div class="rec-item-m">
+                                <div class="rec-dot"></div>
+                                <div>
+                                    <strong>Konsultasi dengan Petugas Puskesmas Lok Bahu</strong>
+                                    <p>Jika mengalami tekanan psikologis atau skor di atas batas normal, diskusikan langkah intervensi dengan dokter atau konselor Puskesmas.</p>
+                                </div>
+                            </div>
+                            <div class="rec-item-m">
+                                <div class="rec-dot"></div>
+                                <div>
+                                    <strong>Bangun Dukungan Sosial</strong>
+                                    <p>Bicarakan apa yang dirasakan dengan keluarga, pasangan, atau orang terdekat yang dapat dipercaya.</p>
+                                </div>
+                            </div>
+                            <div class="rec-item-m">
+                                <div class="rec-dot"></div>
+                                <div>
+                                    <strong>Kelola Stres &amp; Pola Istirahat</strong>
+                                    <p>Cukupi waktu tidur malam (7–8 jam), lakukan relaksasi pernapasan, dan luangkan waktu untuk aktivitas positif.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- TOMBOL AKSI LENGKAP & RAPI -->
-                <div style="display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.5rem">
+                <!-- ── RINGKASAN DATA PASIEN ───────────────── -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                        </svg>
+                        Ringkasan Data Responden
+                    </div>
+                    <div class="card-body" style="padding:.75rem 1.1rem">
+                        <div class="data-row-m">
+                            <span class="data-key-m">Nama</span>
+                            <span class="data-val-m" x-text="dp.nama || '-'"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">NIK</span>
+                            <span class="data-val-m" x-text="dp.nik || 'Tidak Dicantumkan'"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">Tanggal Lahir</span>
+                            <span class="data-val-m" x-text="(dp.tanggalLahir || '-') + ' (' + (dp.usia || '-') + ' th)'"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">Jenis Kelamin</span>
+                            <span class="data-val-m" x-text="dp.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">No. WhatsApp</span>
+                            <span class="data-val-m" x-text="dp.noHp || '-'"></span>
+                        </div>
+                        <div class="data-row-m" x-show="dp.alamat">
+                            <span class="data-key-m">Alamat</span>
+                            <span class="data-val-m" x-text="dp.alamat"></span>
+                        </div>
+                        <div class="data-row-m" x-show="dp.statusKehamilan">
+                            <span class="data-key-m">Status</span>
+                            <span class="data-val-m" x-text="dp.statusKehamilan"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">Instrumen</span>
+                            <span class="data-val-m" x-text="hasil.instrumenLabel || '-'"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">Tanggal Skrining</span>
+                            <span class="data-val-m" x-text="tglSkrining"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">Hasil Penapisan</span>
+                            <span class="data-val-m" :style="'color:'+(hasil.berisiko?'#991b1b':'#065f46')"
+                                  x-text="hasil.berisiko ? 'Berisiko' : 'Tidak Berisiko'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── TOMBOL AKSI ──────────────────────────── -->
+                <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem">
                     <a :href="linkWA" target="_blank" class="btn btn-wa btn-block">
-                        💬 Hubungi Petugas via WhatsApp
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                        </svg>
+                        Hubungi Petugas via WhatsApp
                     </a>
                     <button type="button" @click="bagikanWA()" class="btn btn-outline btn-block">
                         📲 Bagikan Hasil ke Kerabat
@@ -135,20 +273,22 @@
                     <button type="button" onclick="window.print()" class="btn btn-secondary btn-block">
                         🖨️ Cetak / Simpan PDF
                     </button>
-                    <a href="form.html" class="btn btn-secondary btn-block">
+                    <a href="index.html" class="btn btn-secondary btn-block">
                         🔄 Skrining Ulang / Pasien Lain
                     </a>
                 </div>
 
-                <!-- INFO PUSKESMAS -->
+                <!-- ── INFO PUSKESMAS ──────────────────────── -->
                 <div class="footer-m">
                     <div class="footer-m-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg>
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/>
+                        </svg>
                     </div>
                     <div>
                         <div class="footer-m-name" x-text="faskesConfig.namaFaskes"></div>
                         <div class="footer-m-addr" x-text="faskesConfig.alamat"></div>
-                        <div class="footer-m-addr" x-text="faskesConfig.jamLayanan" style="color:var(--indigo-600);font-weight:600;margin-top:.2rem"></div>
+                        <div class="footer-m-addr" x-text="faskesConfig.jamLayanan" style="color:var(--indigo-600);font-weight:700;margin-top:.25rem"></div>
                     </div>
                 </div>
 
@@ -166,7 +306,7 @@
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
             <span>Skrining</span>
         </a>
-        <a href="#" class="bottom-nav-item active">
+        <a href="hasil.html" class="bottom-nav-item active">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             <span>Hasil</span>
         </a>
@@ -176,26 +316,27 @@
     function mobileHasil() {
         return {
             dataSkrining: null,
-            dp: {},
-            hasil: {},
+            dp: {}, hasil: {},
             faskesConfig: window.FASKES_CONFIG,
             tglSkrining: '',
             linkWA: '#',
 
             init() {
                 const raw = sessionStorage.getItem('hasilSkrining');
-                if (!raw) {
-                    this.dataSkrining = null;
-                    return;
-                }
+                if (!raw) { this.dataSkrining = null; return; }
                 try {
                     const data = JSON.parse(raw);
                     this.dataSkrining = data;
-                    this.dp = data.dataPasien || {};
-                    this.hasil = data.hasil || {};
-                    this.tglSkrining = new Date(data.waktuSkrining || Date.now()).toLocaleDateString('id-ID', {
-                        day: 'numeric', month: 'long', year: 'numeric'
-                    });
+                    this.dp    = data.dataPasien || {};
+                    this.hasil = data.hasil      || {};
+
+                    // Pastikan hasil.instrumen tersedia
+                    if (!this.hasil.instrumen && data.instrumen) {
+                        this.hasil.instrumen = data.instrumen;
+                    }
+
+                    this.tglSkrining = new Date(data.waktuSkrining || Date.now())
+                        .toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                     this.linkWA = this.faskesConfig.getLinkWA(this.dp, this.hasil);
                 } catch(e) {
                     this.dataSkrining = null;
@@ -204,10 +345,10 @@
 
             bagikanWA() {
                 const s = this.hasil.berisiko ? 'BERISIKO' : 'TIDAK BERISIKO';
-                let t = `Halo, saya baru saja melakukan Skrining Kesehatan Jiwa Mandiri (%2A${this.hasil.instrumenLabel||''}%2A).%0A%0A`;
-                t += `Hasil: *${s}* (${this.hasil.ringkasan||'-'})%0A`;
-                t += `Faskes: *${this.faskesConfig.namaFaskes}*%0A%0A`;
-                t += `Skrining gratis dapat diakses mandiri via portal Puskesmas.`;
+                let t = `Halo, saya baru saja melakukan Skrining Kesehatan Jiwa Mandiri (%2A${this.hasil.instrumenLabel || ''}%2A).%0A%0A`;
+                t += `Hasil: *${s}* (${this.hasil.ringkasan || '-'})%0A`;
+                t += `Faskes Rujukan: *${this.faskesConfig.namaFaskes}*%0A%0A`;
+                t += `Skrining gratis dapat diakses mandiri via portal resmi Puskesmas.`;
                 window.open('https://wa.me/?text=' + t, '_blank');
             }
         };

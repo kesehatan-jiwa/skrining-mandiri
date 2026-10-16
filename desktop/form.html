@@ -517,7 +517,7 @@ function formApp() {
                 return Array.from({length: 10}, (_, i) => 'q' + (i+1)).every(k => this.jawaban[k] !== undefined && this.jawaban[k] !== null);
             }
             if (this.instrumen === 'mindhear') {
-                return ['a1','a2','a3','b1','b2','b3'].every(k => this.jawaban[k]);
+                return ['a1','a2','a3','b1','b2','b3'].every(k => this.jawaban[k] === 'ya' || this.jawaban[k] === 'tidak');
             }
             return false;
         },
@@ -538,33 +538,47 @@ function formApp() {
 
         async submitForm() {
             this.step = 3;
-            const logic = window.SKRINING_LOGIC;
-            let hasil;
-            if (this.instrumen === 'phq4') {
-                hasil = logic.hitungPHQ4(this.jawaban);
-            } else if (this.instrumen === 'epds') {
-                hasil = logic.hitungEPDS(this.jawaban);
-            } else {
-                hasil = logic.hitungMINDHEAR(this.jawaban, this.kelompokUsia);
-            }
-
-            // Simpan ke SessionStorage
-            sessionStorage.setItem('hasilSkrining', JSON.stringify({
-                dataPasien: this.dp,
-                hasil: hasil,
-                waktuSkrining: new Date().toISOString()
-            }));
-
-            // Kirim ke Google Sheets di background
             try {
-                const payload = logic.buildPayload(this.instrumen, this.dp, hasil);
-                await window.FASKES_CONFIG.kirimKeGoogleSheets(payload);
-            } catch(e) {
-                console.warn('[GAS] Gagal mengirim:', e);
+                const logic = window.SKRINING_LOGIC;
+                let hasil;
+                if (this.instrumen === 'phq4') {
+                    hasil = logic.hitungPHQ4(this.jawaban);
+                } else if (this.instrumen === 'epds') {
+                    hasil = logic.hitungEPDS(this.jawaban);
+                } else {
+                    // Pastikan kelompokUsia dihitung dari tanggal lahir jika belum
+                    if (!this.kelompokUsia && this.dp.usia) {
+                        this.kelompokUsia = logic.kategoriUsiaMindhear(this.dp.usia);
+                    }
+                    hasil = logic.hitungMINDHEAR(this.jawaban, this.kelompokUsia);
+                }
+
+                // Simpan ke SessionStorage
+                const dataToSave = {
+                    instrumen: this.instrumen,
+                    dataPasien: this.dp,
+                    hasil: hasil,
+                    waktuSkrining: new Date().toISOString()
+                };
+                sessionStorage.setItem('hasilSkrining', JSON.stringify(dataToSave));
+
+                // Kirim ke Google Sheets di background (non-blocking)
+                try {
+                    const payload = logic.buildPayload(this.instrumen, this.dp, hasil);
+                    window.FASKES_CONFIG.kirimKeGoogleSheets(payload).catch(e =>
+                        console.warn('[GAS] Gagal mengirim:', e)
+                    );
+                } catch(e) {
+                    console.warn('[GAS] Build payload error:', e);
+                }
+
+            } catch(err) {
+                console.error('[SKRINING] Error saat submit:', err);
+                // Tetap redirect meski ada error — hasil akan kosong dan ditangani di hasil.html
             }
 
-            // Arahkan ke hasil
-            window.location.href = 'hasil.html';
+            // Redirect selalu terjadi (tidak boleh tergantung pada GAS)
+            setTimeout(() => { window.location.href = 'hasil.html'; }, 300);
         }
     };
 }

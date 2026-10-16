@@ -52,21 +52,19 @@ window.SKRINING_LOGIC = {
     },
 
     // ── EPDS ─────────────────────────────────────────────────
-    // Normal  (0-1-2-3): Q1, Q2, Q4
-    // Terbalik(3-2-1-0): Q3, Q5, Q6, Q7, Q8, Q9, Q10
+    // Jawaban disimpan sebagai nilai numerik langsung (0/1/2/3)
+    // karena opt.nilai di form adalah angka, bukan huruf a/b/c/d
     // Q10 positif (skor>0) = risiko bunuh diri → rujuk segera
     hitungEPDS(jawaban) {
-        const normalMap   = { a: 0, b: 1, c: 2, d: 3 };
-        const reversedMap = { a: 3, b: 2, c: 1, d: 0 };
-        const normalQ   = [1, 2, 4];
-        const reversedQ = [3, 5, 6, 7, 8, 9, 10];
-
         let totalSkor = 0;
         const skorPerQ = {};
         for (let i = 1; i <= 10; i++) {
-            const jawab = (jawaban[`q${i}`] || "d").toLowerCase();
-            const skor  = reversedQ.includes(i) ? (reversedMap[jawab] ?? 0) : (normalMap[jawab] ?? 0);
-            skorPerQ[`q${i}`] = skor;
+            const key = `q${i}`;
+            // Nilai sudah berupa angka (0/1/2/3) langsung dari form
+            const skor = (jawaban[key] !== undefined && jawaban[key] !== null)
+                ? parseInt(jawaban[key])
+                : 0;
+            skorPerQ[key] = skor;
             totalSkor += skor;
         }
 

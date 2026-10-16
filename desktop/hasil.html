@@ -418,6 +418,11 @@ function hasilApp() {
                 this.pasien = data.dataPasien || {};
                 this.hasil = data.hasil || {};
 
+                // Pastikan hasil.instrumen tersedia (backward-compat)
+                if (!this.hasil.instrumen && data.instrumen) {
+                    this.hasil.instrumen = data.instrumen;
+                }
+
                 const dateObj = data.waktuSkrining ? new Date(data.waktuSkrining) : new Date();
                 this.tanggalFormatted = dateObj.toLocaleDateString('id-ID', {
                     day: 'numeric', month: 'long', year: 'numeric'
