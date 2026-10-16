@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Skrining Kesehatan Jiwa — Puskesmas Lok Bahu</title>
+    <link rel="stylesheet" href="../assets/css/desktop.css">
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/logic.js"></script>
+</head>
+<body x-data="formApp()" x-init="init()">
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <img src="../assets/img/logopuskesmas.png" alt="Puskesmas Lok Bahu" class="brand-logo-img">
+                <div class="brand-text">
+                    <h1>Skrining Kesehatan Jiwa</h1>
+                    <p x-text="instrumenLabel || 'Formulir Penapisan Mandiri'"></p>
+                </div>
+            </a>
+
+            <span class="nav-badge" x-text="faskesConfig.namaFaskes"></span>
+
+            <ul class="nav-links">
+                <li><a href="index.html">‹ Beranda</a></li>
+                <li><a href="#" class="active">Form Skrining</a></li>
+                <li><a href="hasil.html">Hasil Skrining</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTAINER -->
+    <div class="page-container">
+
+        <div class="form-layout">
+
+            <!-- ── MAIN FORM CARD ────────────────────────────────────────── -->
+            <div class="form-card">
+
+                <!-- Stepper Bar -->
+                <div class="stepper-header">
+                    <div>
+                        <div class="stepper-title" x-text="instrumenLabel"></div>
+                        <div class="stepper-sub">Silakan lengkapi formulir di bawah ini dengan data yang sebenarnya</div>
+                    </div>
+                    <span style="font-size: 0.8rem; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px;" x-text="'Langkah ' + step + ' dari 2'"></span>
+                </div>
+
+                <div class="stepper-bar">
+                    <div class="step-item" :class="{active: step===1, done: step>1}">
+                        <div class="step-circle" x-text="step>1 ? '✓' : '1'"></div>
+                        <span>Identitas Responden</span>
+                    </div>
+                    <div class="step-divider-line" :class="{done: step>1}"></div>
+                    <div class="step-item" :class="{active: step===2, done: step>2}">
+                        <div class="step-circle" x-text="step>2 ? '✓' : '2'"></div>
+                        <span>Isi Kuesioner</span>
+                    </div>
+                    <div class="step-divider-line" :class="{done: step>2}"></div>
+                    <div class="step-item" :class="{active: step===3}">
+                        <div class="step-circle">3</div>
+                        <span>Hasil & Rekomendasi</span>
+                    </div>
+                </div>
+
+                <!-- ── LANGKAH 1: DATA IDENTITAS PASIEN ─────────────────── -->
+                <div class="form-body-pad" x-show="step===1" x-transition>
+                    <div class="form-section-title">Data Identitas Responden</div>
+                    <div class="form-section-desc">Identitas digunakan untuk penyesuaian evaluasi klinis dan verifikasi saat rujukan.</div>
+
+                    <div class="form-grid-2">
+                        <!-- Nama Lengkap -->
+                        <div class="form-group span-2">
+                            <label>Nama Lengkap <span class="req">*</span></label>
+                            <input type="text" x-model="dp.nama" placeholder="Contoh: Budi Santoso" autocomplete="off">
+                        </div>
+
+                        <!-- Nama Orang Tua / Wali (Khusus Remaja/Anak MINDHEAR 5-9 Th) -->
+                        <div class="form-group span-2" x-show="instrumen==='mindhear' && kelompokUsia==='5-9'" x-transition>
+                            <label>Nama Orang Tua / Wali Pendamping <span class="req">*</span></label>
+                            <input type="text" x-model="dp.namaOrtu" placeholder="Nama ayah / ibu pendamping pengisian" autocomplete="off">
+                            <span class="input-hint">Anak usia 5–9 tahun wajib didampingi oleh orang tua saat skrining.</span>
+                        </div>
+
+                        <!-- NIK -->
+                        <div class="form-group">
+                            <label>Nomor Induk Kependudukan (NIK)</label>
+                            <input type="text" x-model="dp.nik" maxlength="16" placeholder="16 digit NIK KTP / KK" autocomplete="off">
+                            <span class="input-hint">Opsional (untuk integrasi rekam medis Puskesmas)</span>
+                        </div>
+
+                        <!-- Tanggal Lahir -->
+                        <div class="form-group">
+                            <label>Tanggal Lahir <span class="req">*</span></label>
+                            <input type="date" x-model="dp.tanggalLahir" @change="onTglLahir()" :max="today">
+                            <span class="input-hint" x-show="dp.usia" x-text="'Usia terhitung: ' + dp.usia + ' tahun'"></span>
+                        </div>
+
+                        <!-- JENIS KELAMIN: Jika BUKAN EPDS, tampilkan pilihan -->
+                        <div class="form-group" x-show="instrumen !== 'epds'">
+                            <label>Jenis Kelamin <span class="req">*</span></label>
+                            <select x-model="dp.jenisKelamin">
+                                <option value="">— Pilih Jenis Kelamin —</option>
+                                <option value="L">Laki-laki</option>
+                                <option value="P">Perempuan</option>
+                            </select>
+                        </div>
+
+                        <!-- KHUSUS EPDS: OTOMATIS PEREMPUAN (TIDAK ADA OPSI LAKI-LAKI) -->
+                        <div class="form-group" x-show="instrumen === 'epds'">
+                            <label>Jenis Kelamin</label>
+                            <div style="padding: 11px 14px; background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 10px; color: #be123c; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14a5 5 0 100-10 5 5 0 000 10zm0 0v6m-3-3h6"/></svg>
+                                <span>Perempuan (Khusus Ibu Hamil / Ibu Nifas)</span>
+                            </div>
+                            <span class="input-hint">Instrumen EPDS dirancang khusus untuk populasi ibu perinatal.</span>
+                        </div>
+
+                        <!-- No. HP / WhatsApp -->
+                        <div class="form-group">
+                            <label>Nomor WhatsApp Aktif <span class="req">*</span></label>
+                            <input type="tel" x-model="dp.noHp" placeholder="Contoh: 081234567890" autocomplete="off">
+                            <span class="input-hint">Digunakan petugas faskes untuk tindak lanjut hasil</span>
+                        </div>
+
+                        <!-- Status Kehamilan / Nifas (KHUSUS EPDS) -->
+                        <div class="form-group span-2" x-show="instrumen==='epds'" x-transition>
+                            <label>Status Kehamilan / Pasca Persalinan <span class="req">*</span></label>
+                            <select x-model="dp.statusKehamilan">
+                                <option value="">— Pilih Masa Kehamilan / Nifas —</option>
+                                <option value="Hamil Trimester I (0–12 Minggu)">Hamil Trimester I (0–12 Minggu)</option>
+                                <option value="Hamil Trimester II (13–27 Minggu)">Hamil Trimester II (13–27 Minggu)</option>
+                                <option value="Hamil Trimester III (>28 Minggu)">Hamil Trimester III (>28 Minggu)</option>
+                                <option value="Ibu Nifas (< 6 Bulan Pasca Melahirkan)">Ibu Nifas (< 6 Bulan Pasca Melahirkan)</option>
+                                <option value="Ibu Nifas (≥ 6 Bulan Pasca Melahirkan)">Ibu Nifas (≥ 6 Bulan Pasca Melahirkan)</option>
+                            </select>
+                        </div>
+
+                        <!-- Status Perkawinan (PHQ-4) -->
+                        <div class="form-group" x-show="instrumen==='phq4'" x-transition>
+                            <label>Status Perkawinan</label>
+                            <select x-model="dp.statusKawin">
+                                <option value="">— Pilih Status —</option>
+                                <option value="Belum Menikah">Belum Menikah</option>
+                                <option value="Menikah">Menikah</option>
+                                <option value="Cerai Hidup">Cerai Hidup</option>
+                                <option value="Cerai Mati">Cerai Mati</option>
+                            </select>
+                        </div>
+
+                        <!-- Alamat Lengkap -->
+                        <div class="form-group span-2">
+                            <label>Alamat Domisili</label>
+                            <input type="text" x-model="dp.alamat" placeholder="Jalan, RT, Kelurahan di wilayah Samarinda" autocomplete="off">
+                        </div>
+
+                        <!-- Persetujuan Responden -->
+                        <div class="form-group span-2" style="margin-top: 10px;">
+                            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-weight: 500; font-size: 0.85rem; color: var(--slate-700);">
+                                <input type="checkbox" x-model="persetujuan" style="width: 18px; height: 18px; margin-top: 2px; accent-color: var(--indigo-600);">
+                                <span>Saya menyatakan bahwa informasi yang saya masukkan adalah benar untuk keperluan skrining kesehatan jiwa mandiri di Puskesmas Lok Bahu.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── LANGKAH 2: PERTANYAAN KUESIONER KLINIS ─────────────── -->
+                <div class="form-body-pad" x-show="step===2" x-transition>
+                    
+                    <!-- Kuesioner PHQ-4 -->
+                    <template x-if="instrumen==='phq4'">
+                        <div>
+                            <div class="form-section-title">Kuesioner PHQ-4 (Dewasa)</div>
+                            <div class="form-section-desc">Selama <strong>2 minggu terakhir</strong>, seberapa sering Anda terganggu oleh masalah-masalah berikut?</div>
+
+                            <!-- Q1 & Q2: PHQ-2 Depresi -->
+                            <div style="background: var(--slate-50); border-left: 3px solid var(--indigo-600); padding: 8px 14px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; color: var(--indigo-900); margin-bottom: 14px;">
+                                Sub-skala 1: Depresi (PHQ-2)
+                            </div>
+                            <template x-for="q in phq4Depresi" :key="q.id">
+                                <div class="question-card">
+                                    <div class="question-header">
+                                        <span class="q-num" x-text="q.no"></span>
+                                        <span class="q-text" x-text="q.teks"></span>
+                                    </div>
+                                    <div class="likert-grid">
+                                        <template x-for="opt in likertPHQ4" :key="opt.nilai">
+                                            <div class="likert-option" :class="{selected: jawaban[q.id] === opt.nilai}" @click="jawaban[q.id] = opt.nilai" x-text="opt.label + ' (' + opt.nilai + ')'"></div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Q3 & Q4: GAD-2 Kecemasan -->
+                            <div style="background: var(--slate-50); border-left: 3px solid var(--violet-600); padding: 8px 14px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; color: var(--violet-900); margin: 20px 0 14px;">
+                                Sub-skala 2: Kecemasan (GAD-2)
+                            </div>
+                            <template x-for="q in phq4Cemas" :key="q.id">
+                                <div class="question-card">
+                                    <div class="question-header">
+                                        <span class="q-num" x-text="q.no"></span>
+                                        <span class="q-text" x-text="q.teks"></span>
+                                    </div>
+                                    <div class="likert-grid">
+                                        <template x-for="opt in likertPHQ4" :key="opt.nilai">
+                                            <div class="likert-option" :class="{selected: jawaban[q.id] === opt.nilai}" @click="jawaban[q.id] = opt.nilai" x-text="opt.label + ' (' + opt.nilai + ')'"></div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Kuesioner EPDS (10 Pertanyaan) -->
+                    <template x-if="instrumen==='epds'">
+                        <div>
+                            <div class="form-section-title">Kuesioner EPDS (Ibu Hamil & Nifas)</div>
+                            <div class="form-section-desc">Pilihlah salah satu jawaban yang paling mendekati apa yang Anda rasakan selama <strong>7 hari terakhir</strong>.</div>
+
+                            <template x-for="q in epdsQuestions" :key="q.id">
+                                <div class="question-card">
+                                    <div class="question-header">
+                                        <span class="q-num" x-text="'No. ' + q.no"></span>
+                                        <span class="q-text" x-text="q.teks"></span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        <template x-for="opt in q.opsi" :key="opt.nilai">
+                                            <div class="likert-option" style="text-align: left; padding: 10px 14px; display: flex; justify-content: space-between;"
+                                                 :class="{selected: jawaban[q.id] === opt.nilai}" @click="jawaban[q.id] = opt.nilai">
+                                                <span x-text="opt.teks"></span>
+                                                <span style="font-weight: 700; font-size: 0.75rem; opacity: 0.8;" x-text="'Skor: ' + opt.nilai"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Kuesioner MINDHEAR (6 Pertanyaan Ya/Tidak) -->
+                    <template x-if="instrumen==='mindhear'">
+                        <div>
+                            <div class="form-section-title">Mini MINDHEAR Youth Scale (Anak & Remaja)</div>
+                            <div class="form-section-desc">Jawablah pertanyaan di bawah ini dengan <strong>Ya</strong> atau <strong>Tidak</strong> berdasarkan apa yang dirasakan akhir-akhir ini.</div>
+
+                            <div style="background: var(--indigo-50); border-left: 3px solid var(--indigo-600); padding: 8px 14px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; color: var(--indigo-900); margin-bottom: 14px;">
+                                Skala A — Ansietas / Kecemasan (3 Pertanyaan)
+                            </div>
+                            <template x-for="q in mindhearA" :key="q.id">
+                                <div class="question-card">
+                                    <div class="question-header">
+                                        <span class="q-num" x-text="q.no"></span>
+                                        <span class="q-text" x-text="q.teks"></span>
+                                    </div>
+                                    <div class="yn-grid">
+                                        <div class="yn-card" :class="{'selected-ya': jawaban[q.id] === 'ya'}" @click="jawaban[q.id] = 'ya'">✓ Ya (Merasakan)</div>
+                                        <div class="yn-card" :class="{'selected-tidak': jawaban[q.id] === 'tidak'}" @click="jawaban[q.id] = 'tidak'">✗ Tidak Merasakan</div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div style="background: var(--violet-50); border-left: 3px solid var(--violet-600); padding: 8px 14px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; color: var(--violet-900); margin: 20px 0 14px;">
+                                Skala B — Depresi / Suasana Hati (3 Pertanyaan)
+                            </div>
+                            <template x-for="q in mindhearB" :key="q.id">
+                                <div class="question-card">
+                                    <div class="question-header">
+                                        <span class="q-num" x-text="q.no"></span>
+                                        <span class="q-text" x-text="q.teks"></span>
+                                    </div>
+                                    <div class="yn-grid">
+                                        <div class="yn-card" :class="{'selected-ya': jawaban[q.id] === 'ya'}" @click="jawaban[q.id] = 'ya'">✓ Ya (Merasakan)</div>
+                                        <div class="yn-card" :class="{'selected-tidak': jawaban[q.id] === 'tidak'}" @click="jawaban[q.id] = 'tidak'">✗ Tidak Merasakan</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                </div>
+
+                <!-- ── LANGKAH 3: PROSES SUBMIT ─────────────────────────── -->
+                <div class="form-body-pad" x-show="step===3" style="text-align: center; padding: 60px 32px;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; border: 4px solid var(--indigo-200); border-top-color: var(--indigo-600); animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--indigo-900);">Mengevaluasi Hasil Skrining...</h3>
+                    <p style="font-size: 0.85rem; color: var(--slate-500); margin-top: 4px;">Data sedang dihitung dan dikirim ke sistem Puskesmas Lok Bahu</p>
+                </div>
+
+                <!-- ── FORM ACTION NAVIGATION BAR ────────────────────────── -->
+                <div class="form-action-nav" x-show="step !== 3">
+                    <button type="button" @click="prevStep()" class="btn btn-secondary" x-show="step > 1">
+                        ← Kembali ke Langkah 1
+                    </button>
+                    <div x-show="step === 1"></div>
+
+                    <button type="button" @click="nextStep()" class="btn btn-primary" x-show="step === 1" :disabled="!step1Valid()">
+                        <span>Lanjut ke Kuesioner</span>
+                        <span>→</span>
+                    </button>
+
+                    <button type="button" @click="submitForm()" class="btn btn-primary" x-show="step === 2" :disabled="!step2Valid()">
+                        <span>Lihat Hasil & Donut Chart</span>
+                        <span>✓</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- ── FORM SIDEBAR (STICKY PANDUAN & BANTUAN) ────────────────── -->
+            <aside class="form-sidebar">
+                <div class="sidebar-box">
+                    <div class="sidebar-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+                        <span>Tentang Instrumen Ini</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--slate-600); line-height: 1.5; margin-bottom: 12px;" x-text="instrumenInfo"></p>
+                    <ul class="sidebar-list">
+                        <li>
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Jawaban bersifat rahasia dan aman.</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Hasil langsung berbentuk diagram bulat & status risiko.</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Dapat dicetak sebagai PDF resmi.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-box">
+                    <div class="sidebar-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg>
+                        <span>Puskesmas Lok Bahu</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--slate-600); line-height: 1.45;">
+                        Layanan Kesehatan Jiwa:<br>
+                        <strong>Senin – Sabtu, 07.30 – 12.00 WITA</strong><br>
+                        WhatsApp Konsultasi: <strong>+62 851-7117-2121</strong>
+                    </p>
+                </div>
+            </aside>
+
+        </div>
+
+    </div>
+
+<style>
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+</style>
+
+<script>
+function formApp() {
+    return {
+        step: 1,
+        instrumen: 'phq4',
+        instrumenLabel: '',
+        instrumenInfo: '',
+        faskesConfig: window.FASKES_CONFIG,
+        today: new Date().toISOString().split('T')[0],
+        persetujuan: false,
+        kelompokUsia: '',
+
+        dp: {
+            nama: '', nik: '', tanggalLahir: '', usia: '', jenisKelamin: '',
+            noHp: '', alamat: '', statusKawin: '', statusKehamilan: '',
+            namaOrtu: ''
+        },
+
+        jawaban: {},
+
+        likertPHQ4: [
+            { nilai: 0, label: 'Tidak Pernah' },
+            { nilai: 1, label: 'Beberapa Hari' },
+            { nilai: 2, label: 'Separuh Waktu' },
+            { nilai: 3, label: 'Hampir Tiap Hari' }
+        ],
+
+        phq4Depresi: [
+            { id: 'q1', no: '1', teks: 'Kurang berminat atau kurang bergairah dalam melakukan hal-hal yang menyenangkan.' },
+            { id: 'q2', no: '2', teks: 'Merasa sedih, murung, tertekan, atau putus asa.' }
+        ],
+        phq4Cemas: [
+            { id: 'q3', no: '3', teks: 'Merasa gelisah, cemas, atau sangat tegang.' },
+            { id: 'q4', no: '4', teks: 'Tidak mampu menghentikan atau mengendalikan rasa khawatir.' }
+        ],
+
+        epdsQuestions: [
+            { id: 'q1', no: 1, teks: 'Saya mampu tertawa dan melihat sisi lucu dari berbagai hal:',
+              opsi: [
+                { nilai: 0, teks: 'Sama seperti yang selalu saya bisa lakukan' },
+                { nilai: 1, teks: 'Tidak begitu banyak sekarang' },
+                { nilai: 2, teks: 'Jelas tidak begitu banyak sekarang' },
+                { nilai: 3, teks: 'Tidak bisa sama sekali' }
+              ] },
+            { id: 'q2', no: 2, teks: 'Saya melihat masa depan dengan penuh harapan dan kenikmatan:',
+              opsi: [
+                { nilai: 0, teks: 'Sebanyak yang selalu saya lakukan' },
+                { nilai: 1, teks: 'Agak kurang dari yang biasa saya lakukan' },
+                { nilai: 2, teks: 'Jelas kurang dari yang biasa saya lakukan' },
+                { nilai: 3, teks: 'Hampir tidak pernah sama sekali' }
+              ] },
+            { id: 'q3', no: 3, teks: 'Saya menyalahkan diri sendiri secara tidak wajar saat terjadi kesalahan:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, sebagian besar waktu' },
+                { nilai: 2, teks: 'Ya, beberapa kali' },
+                { nilai: 1, teks: 'Tidak terlalu sering' },
+                { nilai: 0, teks: 'Tidak, tidak pernah sama sekali' }
+              ] },
+            { id: 'q4', no: 4, teks: 'Saya merasa cemas atau khawatir tanpa alasan yang jelas:',
+              opsi: [
+                { nilai: 0, teks: 'Tidak, tidak sama sekali' },
+                { nilai: 1, teks: 'Hampir tidak pernah' },
+                { nilai: 2, teks: 'Ya, kadang-kadang' },
+                { nilai: 3, teks: 'Ya, sangat sering' }
+              ] },
+            { id: 'q5', no: 5, teks: 'Saya merasa takut atau panik tanpa alasan yang sangat jelas:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, cukup sering' },
+                { nilai: 2, teks: 'Ya, kadang-kadang' },
+                { nilai: 1, teks: 'Tidak, tidak banyak' },
+                { nilai: 0, teks: 'Tidak, tidak sama sekali' }
+              ] },
+            { id: 'q6', no: 6, teks: 'Hal-hal yang saya hadapi terasa begitu menumpuk dan membebani saya:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, sebagian besar waktu saya tidak mampu mengatasinya' },
+                { nilai: 2, teks: 'Ya, kadang-kadang saya tidak mampu mengatasinya dengan baik' },
+                { nilai: 1, teks: 'Tidak, sebagian besar waktu saya mampu mengatasinya' },
+                { nilai: 0, teks: 'Tidak, saya mengatasinya sebaik biasanya' }
+              ] },
+            { id: 'q7', no: 7, teks: 'Saya merasa sangat tidak bahagia sehingga sulit tidur:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, sebagian besar waktu' },
+                { nilai: 2, teks: 'Ya, kadang-kadang' },
+                { nilai: 1, teks: 'Tidak terlalu sering' },
+                { nilai: 0, teks: 'Tidak, tidak sama sekali' }
+              ] },
+            { id: 'q8', no: 8, teks: 'Saya merasa sedih atau sengsara:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, hampir sepanjang waktu' },
+                { nilai: 2, teks: 'Ya, cukup sering' },
+                { nilai: 1, teks: 'Tidak terlalu sering' },
+                { nilai: 0, teks: 'Tidak, tidak sama sekali' }
+              ] },
+            { id: 'q9', no: 9, teks: 'Saya merasa sangat tidak bahagia sehingga saya menangis:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, hampir sepanjang waktu' },
+                { nilai: 2, teks: 'Ya, cukup sering' },
+                { nilai: 1, teks: 'Hanya sesekali' },
+                { nilai: 0, teks: 'Tidak, tidak pernah sama sekali' }
+              ] },
+            { id: 'q10', no: 10, teks: 'Pikiran untuk mencelakai diri sendiri pernah terlintas di benak saya:',
+              opsi: [
+                { nilai: 3, teks: 'Ya, cukup sering' },
+                { nilai: 2, teks: 'Kadang-kadang' },
+                { nilai: 1, teks: 'Hampir tidak pernah' },
+                { nilai: 0, teks: 'Tidak pernah sama sekali' }
+              ] }
+        ],
+
+        mindhearA: [
+            { id: 'a1', no: '1A', teks: 'Apakah kamu sering merasa gelisah, tidak tenang, atau sulit diam?' },
+            { id: 'a2', no: '2A', teks: 'Apakah kamu sering merasa cemas berlebihan mengenai masa depan atau hal-hal kecil?' },
+            { id: 'a3', no: '3A', teks: 'Apakah otot-otot tubuhmu sering terasa tegang saat memikirkan sesuatu?' }
+        ],
+        mindhearB: [
+            { id: 'b1', no: '1B', teks: 'Apakah kamu sering merasa sedih atau ingin menangis tanpa sebab yang jelas?' },
+            { id: 'b2', no: '2B', teks: 'Apakah kamu kehilangan minat atau rasa senang terhadap hal yang biasanya kamu sukai?' },
+            { id: 'b3', no: '3B', teks: 'Apakah kamu merasa cepat lelah atau kehilangan energi secara drastis?' }
+        ],
+
+        init() {
+            const params = new URLSearchParams(window.location.search);
+            this.instrumen = params.get('t') || 'phq4';
+            
+            if (this.instrumen === 'phq4') {
+                this.instrumenLabel = 'Skrining PHQ-4 (Dewasa Umum)';
+                this.instrumenInfo = 'Kuesioner PHQ-4 terdiri dari 4 pertanyaan yang membagi penilaian depresi (PHQ-2) dan kecemasan (GAD-2) dengan batas nilai cut-off ≥ 3.';
+            } else if (this.instrumen === 'epds') {
+                this.instrumenLabel = 'Skrining EPDS (Ibu Hamil & Nifas)';
+                this.instrumenInfo = 'Edinburgh Postnatal Depression Scale (EPDS) terdiri dari 10 butir pertanyaan terstandar untuk mendeteksi risiko depresi pada ibu masa perinatal.';
+                // FIXED: Khusus EPDS otomatis perempuan
+                this.dp.jenisKelamin = 'P';
+            } else if (this.instrumen === 'mindhear') {
+                this.instrumenLabel = 'Mini MINDHEAR Youth Scale (Anak & Remaja)';
+                this.instrumenInfo = 'Mini MINDHEAR Youth Scale mengevaluasi 3 gejala ansietas dan 3 gejala depresi untuk populasi anak & remaja usia 5–18 tahun.';
+            }
+        },
+
+        onTglLahir() {
+            const usia = window.SKRINING_LOGIC.hitungUsia(this.dp.tanggalLahir);
+            this.dp.usia = usia;
+            if (this.instrumen === 'mindhear') {
+                this.kelompokUsia = window.SKRINING_LOGIC.kategoriUsiaMindhear(usia);
+            }
+        },
+
+        step1Valid() {
+            const d = this.dp;
+            if (!d.nama || !d.tanggalLahir || !d.noHp || !this.persetujuan) return false;
+            if (this.instrumen !== 'epds' && !d.jenisKelamin) return false;
+            if (this.instrumen === 'epds' && !d.statusKehamilan) return false;
+            if (this.instrumen === 'mindhear' && this.kelompokUsia === '5-9' && !d.namaOrtu) return false;
+            return true;
+        },
+
+        step2Valid() {
+            if (this.instrumen === 'phq4') {
+                return ['q1','q2','q3','q4'].every(k => this.jawaban[k] !== undefined && this.jawaban[k] !== null);
+            }
+            if (this.instrumen === 'epds') {
+                return Array.from({length: 10}, (_, i) => 'q' + (i+1)).every(k => this.jawaban[k] !== undefined && this.jawaban[k] !== null);
+            }
+            if (this.instrumen === 'mindhear') {
+                return ['a1','a2','a3','b1','b2','b3'].every(k => this.jawaban[k]);
+            }
+            return false;
+        },
+
+        prevStep() {
+            if (this.step > 1) {
+                this.step--;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        },
+
+        nextStep() {
+            if (this.step1Valid()) {
+                this.step = 2;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        },
+
+        async submitForm() {
+            this.step = 3;
+            const logic = window.SKRINING_LOGIC;
+            let hasil;
+            if (this.instrumen === 'phq4') {
+                hasil = logic.hitungPHQ4(this.jawaban);
+            } else if (this.instrumen === 'epds') {
+                hasil = logic.hitungEPDS(this.jawaban);
+            } else {
+                hasil = logic.hitungMINDHEAR(this.jawaban, this.kelompokUsia);
+            }
+
+            // Simpan ke SessionStorage
+            sessionStorage.setItem('hasilSkrining', JSON.stringify({
+                dataPasien: this.dp,
+                hasil: hasil,
+                waktuSkrining: new Date().toISOString()
+            }));
+
+            // Kirim ke Google Sheets di background
+            try {
+                const payload = logic.buildPayload(this.instrumen, this.dp, hasil);
+                await window.FASKES_CONFIG.kirimKeGoogleSheets(payload);
+            } catch(e) {
+                console.warn('[GAS] Gagal mengirim:', e);
+            }
+
+            // Arahkan ke hasil
+            window.location.href = 'hasil.html';
+        }
+    };
+}
+</script>
+
+</body>
+</html>

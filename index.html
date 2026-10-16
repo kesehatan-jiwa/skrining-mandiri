@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skrining Kesehatan Jiwa — Puskesmas Lok Bahu</title>
+    <meta name="description" content="Skrining Kesehatan Jiwa Mandiri tervalidasi klinis — Puskesmas Lok Bahu Samarinda.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4f46e5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .loader-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px 32px;
+            border-radius: 24px;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25);
+            max-width: 380px;
+            width: 100%;
+        }
+        .logo-wrap {
+            margin-bottom: 20px;
+        }
+        .logo-wrap img {
+            height: 54px;
+            width: auto;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 5px 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+        }
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #818cf8;
+            border-radius: 50%;
+            animation: spin 0.85s linear infinite;
+            margin: 0 auto 18px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+        p {
+            font-size: 0.84rem;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.45;
+        }
+        .noscript-box {
+            position: fixed; inset: 0;
+            background: #0f172a;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px; text-align: center; color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader-card">
+        <div class="logo-wrap">
+            <img src="assets/img/logopuskesmas.png" alt="Puskesmas Lok Bahu">
+        </div>
+        <div class="spinner"></div>
+        <h2>Mendeteksi Perangkat Anda…</h2>
+        <p>Menyesuaikan tampilan terbaik untuk smartphone atau komputer Anda.</p>
+    </div>
+
+    <noscript>
+        <div class="noscript-box">
+            <div style="background:rgba(255,255,255,0.08);padding:30px;border-radius:18px;max-width:400px">
+                <h3 style="margin-bottom:10px;color:#a5b4fc">JavaScript Diperlukan</h3>
+                <p style="margin-bottom:16px;font-size:0.85rem">Silakan aktifkan JavaScript di browser Anda untuk melanjutkan skrining mandiri.</p>
+                <div style="display:flex;gap:10px;justify-content:center">
+                    <a href="mobile/index.html" style="color:white;background:#4f46e5;padding:8px 14px;border-radius:8px;text-decoration:none;font-size:0.85rem">Akses Mobile →</a>
+                    <a href="desktop/index.html" style="color:white;background:#312e81;padding:8px 14px;border-radius:8px;text-decoration:none;font-size:0.85rem">Akses Desktop →</a>
+                </div>
+            </div>
+        </div>
+    </noscript>
+
+    <script src="assets/js/router.js"></script>
+</body>
+</html>

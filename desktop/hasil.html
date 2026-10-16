@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Evaluasi Skrining Kesehatan Jiwa — Puskesmas Lok Bahu</title>
+    <link rel="stylesheet" href="../assets/css/desktop.css">
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/logic.js"></script>
+</head>
+<body x-data="hasilApp()" x-init="init()">
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <img src="../assets/img/logopuskesmas.png" alt="Puskesmas Lok Bahu" class="brand-logo-img">
+                <div class="brand-text">
+                    <h1>Skrining Kesehatan Jiwa</h1>
+                    <p>Hasil Evaluasi Penapisan Mandiri</p>
+                </div>
+            </a>
+
+            <span class="nav-badge" x-text="faskesConfig.namaFaskes"></span>
+
+            <ul class="nav-links">
+                <li><a href="index.html">‹ Beranda</a></li>
+                <li><a href="form.html">Form Skrining</a></li>
+                <li><a href="hasil.html" class="active">Hasil Skrining</a></li>
+                <li x-show="dataSkrining">
+                    <button type="button" @click="window.print()" class="btn btn-outline btn-sm">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.056 48.056 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
+                        <span>Cetak PDF</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTAINER -->
+    <div class="page-container">
+
+        <!-- ============================================================== -->
+        <!-- STATE JIKA BELUM ADA DATA SKRINING (EMPTY STATE TAB)           -->
+        <!-- ============================================================== -->
+        <div x-show="!dataSkrining" class="card card-pad" style="text-align: center; padding: 60px 24px; max-width: 580px; margin: 40px auto;">
+            <div style="width: 64px; height: 64px; border-radius: 18px; background: var(--indigo-50); border: 1.5px solid var(--indigo-200); color: var(--indigo-600); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--slate-900); margin-bottom: 8px;">Belum Ada Riwayat Skrining</h2>
+            <p style="font-size: 0.9rem; color: var(--slate-500); line-height: 1.6; margin-bottom: 24px;">
+                Anda belum mengisi formulir skrining kesehatan jiwa pada sesi browser ini. Silakan mulai skrining mandiri untuk melihat hasil evaluasi dan visualisasi diagram bulat Anda.
+            </p>
+            <a href="index.html#pilih-kategori" class="btn btn-primary" style="padding: 12px 24px;">
+                <span>Mulai Skrining Mandiri Sekarang →</span>
+            </a>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- STATE HASIL SKRINING DITEMUKAN                                 -->
+        <!-- ============================================================== -->
+        <template x-if="dataSkrining">
+            <div class="hasil-layout">
+
+                <!-- ========================================================== -->
+                <!-- KOP SURAT MEDIS RESMI (HANYA MUNCUL DI PDF / CETAK)        -->
+                <!-- ========================================================== -->
+                <div class="print-only print-kop-wrapper">
+                    <img src="../assets/img/logopuskesmas.png" alt="Logo" class="print-kop-logo">
+                    <div class="print-kop-text">
+                        <h4>Pemerintah Kota Samarinda • Dinas Kesehatan</h4>
+                        <h2>UPTD Puskesmas Lok Bahu</h2>
+                        <p>Jl. Ir. H. Nusyirwan Ismail, M.Si. (Ring Road 2) RT. 15, Kel. Lok Bahu, Kec. Sungai Kunjang, Samarinda 75129</p>
+                        <p>Pelayanan Kesehatan Jiwa: Senin – Sabtu, 07.30 – 12.00 WITA • WhatsApp Pelayanan: +62 851-7117-2121</p>
+                    </div>
+                </div>
+
+                <div class="print-only print-doc-header">
+                    <h1>LEMBAR HASIL SKRINING KESEHATAN JIWA MANDIRI</h1>
+                    <div class="doc-meta">
+                        <span>Waktu Pemeriksaan: <strong x-text="tanggalFormatted"></strong></span> • 
+                        <span>Instrumen: <strong x-text="hasil.instrumenLabel || '-'"></strong></span> • 
+                        <span>Sifat Dokumen: <strong>Penapisan Awal Mandiri</strong></span>
+                    </div>
+                </div>
+
+                <!-- ── KOLOM KIRI (UTAMA) ─────────────────────────────────── -->
+                <div>
+
+                    <!-- 1. STATUS HERO CARD -->
+                    <div class="status-hero-card" :class="hasil.berisiko ? 'berisiko' : 'tidak-berisiko'">
+                        <div class="status-badge-pill" :class="hasil.berisiko ? 'merah' : 'hijau'"
+                             x-text="hasil.berisiko ? 'STATUS: BERISIKO (PERLU TINDAK LANJUT)' : 'STATUS: TIDAK BERISIKO (KONDISI BAIK)'">
+                        </div>
+                        <h2 class="status-hero-title" x-text="hasil.ringkasan || 'Hasil Skrining'"></h2>
+                        <p class="status-hero-desc" x-text="hasil.berisiko 
+                            ? 'Berdasarkan respons klinis yang Anda berikan, terindikasi adanya gejala yang memerlukan perhatian lebih lanjut atau konsultasi dengan petugas kesehatan Puskesmas Lok Bahu.' 
+                            : 'Berdasarkan kuesioner yang Anda isi, tidak terdeteksi indikasi gangguan psikologis yang signifikan saat ini. Tetap pertahankan kesehatan jiwa dan pola hidup sehat.'">
+                        </p>
+                    </div>
+
+                    <!-- 2. ALERT BAHAYA JIKA EPDS Q10 POSITIF -->
+                    <template x-if="hasil.instrumen==='epds' && hasil.q10Positif">
+                        <div class="alert-bahaya-banner">
+                            <div class="abb-icon">
+                                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+                            </div>
+                            <div>
+                                <div class="abb-title">⚠️ PERHATIAN KHUSUS — RUJUKAN SEGERA DIPERLUKAN</div>
+                                <div class="abb-desc">Terdapat indikasi pikiran untuk mencelakai diri sendiri (Pertanyaan EPDS No. 10 bernilai positif). Mohon segera hubungi petugas Puskesmas Lok Bahu atau datang langsung untuk mendapatkan pendampingan tenaga kesehatan.</div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- 3. VISUALISASI DIAGRAM BULAT / DONUT CHART GAUGE -->
+                    <!-- KASUS A: PHQ-4 (2 DONUT GAUGE) -->
+                    <template x-if="hasil.instrumen==='phq4'">
+                        <div class="donut-gauge-card">
+                            <div class="donut-card-title">Visualisasi Skor Sub-skala PHQ-4</div>
+                            <div class="donut-gauge-grid">
+                                <!-- PHQ-2 Depresi -->
+                                <div class="donut-unit-wrap">
+                                    <span style="font-size:0.8rem; font-weight:700; color:var(--slate-500); margin-bottom:8px;">Sub-skala 1: PHQ-2 (Depresi)</span>
+                                    <div class="donut-svg-box">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="38" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+                                            <circle cx="50" cy="50" r="38" fill="none"
+                                                :stroke="hasil.hasilDepresi?.level==='danger'?'#ef4444':hasil.hasilDepresi?.level==='warning'?'#f59e0b':'#10b981'"
+                                                stroke-width="10" stroke-linecap="round"
+                                                :stroke-dasharray="donutDash(hasil.skorDepresi, 6)"
+                                                stroke-dashoffset="0"
+                                                style="transition: stroke-dasharray 1s ease;"/>
+                                        </svg>
+                                        <div class="donut-center-text">
+                                            <span class="donut-score-val" :style="'color:' + (hasil.hasilDepresi?.level==='danger'?'#ef4444':hasil.hasilDepresi?.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.skorDepresi"></span>
+                                            <span class="donut-score-max">/ 6 Skor</span>
+                                        </div>
+                                    </div>
+                                    <span class="donut-label-pill" :class="hasil.hasilDepresi?.level" x-text="hasil.hasilDepresi?.label"></span>
+                                    <span style="font-size:0.72rem; color:var(--slate-400); margin-top:4px;">Batas Cut-off ≥ 3</span>
+                                </div>
+
+                                <!-- GAD-2 Kecemasan -->
+                                <div class="donut-unit-wrap">
+                                    <span style="font-size:0.8rem; font-weight:700; color:var(--slate-500); margin-bottom:8px;">Sub-skala 2: GAD-2 (Kecemasan)</span>
+                                    <div class="donut-svg-box">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="38" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+                                            <circle cx="50" cy="50" r="38" fill="none"
+                                                :stroke="hasil.hasilKecemasan?.level==='danger'?'#ef4444':hasil.hasilKecemasan?.level==='warning'?'#f59e0b':'#10b981'"
+                                                stroke-width="10" stroke-linecap="round"
+                                                :stroke-dasharray="donutDash(hasil.skorKecemasan, 6)"
+                                                stroke-dashoffset="0"
+                                                style="transition: stroke-dasharray 1s ease;"/>
+                                        </svg>
+                                        <div class="donut-center-text">
+                                            <span class="donut-score-val" :style="'color:' + (hasil.hasilKecemasan?.level==='danger'?'#ef4444':hasil.hasilKecemasan?.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.skorKecemasan"></span>
+                                            <span class="donut-score-max">/ 6 Skor</span>
+                                        </div>
+                                    </div>
+                                    <span class="donut-label-pill" :class="hasil.hasilKecemasan?.level" x-text="hasil.hasilKecemasan?.label"></span>
+                                    <span style="font-size:0.72rem; color:var(--slate-400); margin-top:4px;">Batas Cut-off ≥ 3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- KASUS B: EPDS (1 DONUT BESAR / 30) -->
+                    <template x-if="hasil.instrumen==='epds'">
+                        <div class="donut-gauge-card">
+                            <div class="donut-card-title">Skor Total Edinburgh Postnatal Depression Scale (EPDS)</div>
+                            <div class="donut-single-center">
+                                <div class="donut-svg-box lg">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="38" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+                                        <circle cx="50" cy="50" r="38" fill="none"
+                                            :stroke="hasil.level==='danger'?'#ef4444':hasil.level==='warning'?'#f59e0b':'#10b981'"
+                                            stroke-width="10" stroke-linecap="round"
+                                            :stroke-dasharray="donutDash(hasil.totalSkor, 30)"
+                                            stroke-dashoffset="0"
+                                            style="transition: stroke-dasharray 1s ease;"/>
+                                    </svg>
+                                    <div class="donut-center-text">
+                                        <span class="donut-score-val lg" :style="'color:' + (hasil.level==='danger'?'#ef4444':hasil.level==='warning'?'#f59e0b':'#10b981')" x-text="hasil.totalSkor"></span>
+                                        <span class="donut-score-max">/ 30 Skor Maks</span>
+                                    </div>
+                                </div>
+                                <span class="donut-label-pill" :class="hasil.level" style="font-size:0.92rem; padding:6px 16px;" x-text="hasil.interpretasi"></span>
+                                <div style="display:flex; gap:12px; margin-top:12px; font-size:0.76rem; color:var(--slate-500);">
+                                    <span>Skor &lt; 9: Risiko Rendah</span> • 
+                                    <span>Skor 9–11: Perlu Pantauan</span> • 
+                                    <span>Skor ≥ 12: Depresi Signifikan</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- KASUS C: MINDHEAR (RINGKASAN SKALA A & B) -->
+                    <template x-if="hasil.instrumen==='mindhear'">
+                        <div class="donut-gauge-card">
+                            <div class="donut-card-title" x-text="'Hasil Evaluasi Mini MINDHEAR (Kelompok Usia: ' + hasil.kelompokUsia + ' Tahun)'"></div>
+                            <div class="donut-gauge-grid">
+                                <div class="donut-unit-wrap" style="background:var(--slate-50); border:1px solid var(--slate-200); padding:16px; border-radius:12px;">
+                                    <span style="font-weight:700; color:var(--indigo-900); margin-bottom:6px;">Skala A — Ansietas / Cemas</span>
+                                    <span class="donut-label-pill" :class="hasil.hasilAnsietas?.level" x-text="hasil.hasilAnsietas?.label"></span>
+                                </div>
+                                <div class="donut-unit-wrap" style="background:var(--slate-50); border:1px solid var(--slate-200); padding:16px; border-radius:12px;">
+                                    <span style="font-weight:700; color:var(--violet-900); margin-bottom:6px;">Skala B — Depresi / Murung</span>
+                                    <span class="donut-label-pill" :class="hasil.hasilDepresi?.level" x-text="hasil.hasilDepresi?.label"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- 4. REKOMENDASI TINDAK LANJUT MEDIS -->
+                    <div class="rekomendasi-card">
+                        <div class="rec-head">
+                            <h3 class="rec-title">Rekomendasi Tindak Lanjut Medis</h3>
+                            <p class="rec-sub">Panduan yang dianjurkan untuk menjaga stabilitas kesehatan mental Anda.</p>
+                        </div>
+                        <ul class="rekomendasi-list">
+                            <li>
+                                <div class="rec-icon-box indigo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                </div>
+                                <div class="rec-text">
+                                    <strong>Konsultasi dengan Petugas Kesehatan Jiwa Puskesmas Lok Bahu</strong>
+                                    <p>Jika mengalami tekanan psikologis atau skor berada di atas batas normal, diskusikan langkah intervensi dengan dokter atau konselor Puskesmas Lok Bahu.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="rec-icon-box emerald">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+                                </div>
+                                <div class="rec-text">
+                                    <strong>Bangun Dukungan Sosial & Komunikasi Terbuka</strong>
+                                    <p>Bicarakan apa yang dirasakan dengan keluarga, pasangan, atau orang terdekat yang dapat dipercaya untuk membantu meringankan beban perasaan.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="rec-icon-box amber">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                </div>
+                                <div class="rec-text">
+                                    <strong>Terapkan Pola Istirahat & Kelola Stres</strong>
+                                    <p>Cukupi waktu tidur malam (7–8 jam), lakukan aktivitas relaksasi pernapasan teratur, serta luangkan waktu untuk kegiatan rekreatif positif.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 5. RINGKASAN DATA LENGKAP RESPONDEN -->
+                    <div class="summary-card">
+                        <div style="border-bottom: 1px solid var(--slate-100); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 1rem; font-weight: 800; color: var(--indigo-900);">Ringkasan Data Responden</h3>
+                                <p style="font-size: 0.78rem; color: var(--slate-500);">Rekapitulasi informasi yang dimasukkan pada formulir.</p>
+                            </div>
+                            <span style="font-size: 0.75rem; background: var(--slate-100); padding: 4px 10px; border-radius: 20px; font-weight: 600;" x-text="tanggalFormatted"></span>
+                        </div>
+
+                        <div class="summary-grid-4">
+                            <div class="summary-item">
+                                <span class="si-label">Nama Lengkap</span>
+                                <div class="si-val" x-text="pasien.nama || '-'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">NIK</span>
+                                <div class="si-val" x-text="pasien.nik || 'Tidak Dicantumkan'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">Usia Responden</span>
+                                <div class="si-val" x-text="(pasien.usia || '-') + ' Tahun'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">Jenis Kelamin</span>
+                                <div class="si-val" x-text="pasien.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">No. WhatsApp / HP</span>
+                                <div class="si-val" x-text="pasien.noHp || '-'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">Instrumen</span>
+                                <div class="si-val" x-text="hasil.instrumenLabel || '-'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">Status Khusus</span>
+                                <div class="si-val" x-text="pasien.statusKehamilan || pasien.statusKawin || hasil.kelompokUsia || '-'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">Hasil Penapisan</span>
+                                <div class="si-val" :style="'color:' + (hasil.berisiko ? '#991b1b' : '#065f46')" x-text="hasil.berisiko ? 'Berisiko' : 'Tidak Berisiko'"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ====================================================== -->
+                    <!-- FOOTER & VALIDASI MEDIS (HANYA MUNCUL DI PRINT / PDF)  -->
+                    <!-- ====================================================== -->
+                    <div class="print-only print-ttd-wrapper">
+                        <div class="print-disclaimer-box">
+                            <strong>CATATAN VALIDASI MEDIS ELEKTRONIK:</strong><br>
+                            Dokumen ini diterbitkan secara elektronik oleh Sistem Skrining Kesehatan Jiwa Mandiri UPTD Puskesmas Lok Bahu. Hasil penapisan ini merupakan indikasi penapisan awal (bukan diagnosis klinis definitif). Bila terindikasi berisiko, disarankan untuk berkonsultasi ke poli kesehatan jiwa Puskesmas Lok Bahu.
+                        </div>
+                        <div class="print-ttd-box">
+                            <div>Samarinda, <span x-text="tanggalFormatted"></span></div>
+                            <div style="font-size:7.5pt; color:#4b5563; margin-top:2px;">Petugas / Penanggung Jawab Jiwa</div>
+                            <div class="print-ttd-space"></div>
+                            <div class="print-ttd-name" x-text="faskesConfig.namaPetugas"></div>
+                            <div class="print-ttd-nip">UPTD Puskesmas Lok Bahu</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ── KOLOM KANAN: CARD PUSKESMAS & BALANCED ACTIONS (STICKY) -->
+                <aside class="hasil-sidebar">
+
+                    <!-- CARD PUSKESMAS RUJUKAN -->
+                    <div class="puskesmas-card">
+                        <div class="pk-header">
+                            <img src="../assets/img/logopuskesmas.png" alt="Logo" class="pk-header-logo">
+                            <div>
+                                <div class="pk-header-title">UPTD Puskesmas Lok Bahu</div>
+                                <div class="pk-header-sub">Fasilitas Pelayanan Rujukan Resmi</div>
+                            </div>
+                        </div>
+
+                        <div class="pk-body">
+                            <div class="pk-info-row">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                                <div>
+                                    <div style="font-size:0.72rem; color:var(--slate-400); text-transform:uppercase; font-weight:700;">Petugas Penanggung Jawab:</div>
+                                    <strong x-text="faskesConfig.namaPetugas"></strong>
+                                </div>
+                            </div>
+
+                            <div class="pk-info-row">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                                <div>
+                                    <div style="font-size:0.72rem; color:var(--slate-400); text-transform:uppercase; font-weight:700;">Alamat Faskes:</div>
+                                    <span x-text="faskesConfig.alamat"></span>
+                                </div>
+                            </div>
+
+                            <div class="pk-info-row">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                                <div>
+                                    <div style="font-size:0.72rem; color:var(--slate-400); text-transform:uppercase; font-weight:700;">Jam Pelayanan Jiwa:</div>
+                                    <span x-text="faskesConfig.jamLayanan"></span>
+                                </div>
+                            </div>
+
+                            <div class="pk-divider"></div>
+
+                            <!-- TOMBOL CTA WHATSAPP UTAMA -->
+                            <a :href="linkWA" target="_blank" class="btn-wa-cta">
+                                <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                                <span>Hubungi Petugas via WhatsApp</span>
+                            </a>
+                            <p style="font-size: 0.72rem; color: var(--slate-400); text-align: center; margin-top: 8px; line-height: 1.4;">
+                                Pesan WhatsApp terisi otomatis dengan ringkasan identitas dan hasil evaluasi skrining Anda.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- CARD AKSI DOKUMEN (PERFECTLY BALANCED VERTICAL STACK) -->
+                    <div class="action-box">
+                        <div class="action-box-title">Aksi & Dokumen Hasil</div>
+
+                        <!-- 1. Bagikan Hasil ke WhatsApp -->
+                        <button type="button" @click="bagikanHasilWA()" class="btn-action-full primary-outline">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                            <span>Bagikan Hasil ke Kerabat</span>
+                        </button>
+
+                        <!-- 2. Cetak Dokumen PDF Resmi -->
+                        <button type="button" @click="window.print()" class="btn-action-full secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            <span>Cetak Dokumen Hasil (PDF)</span>
+                        </button>
+
+                        <!-- 3. Skrining Ulang / Pasien Lain -->
+                        <a href="form.html" class="btn-action-full secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Skrining Ulang untuk Orang Lain</span>
+                        </a>
+                    </div>
+
+                </aside>
+
+            </div>
+        </template>
+
+    </div>
+
+<script>
+function hasilApp() {
+    return {
+        dataSkrining: null,
+        pasien: {},
+        hasil: {},
+        faskesConfig: window.FASKES_CONFIG,
+        tanggalFormatted: '',
+        linkWA: '#',
+
+        init() {
+            const raw = sessionStorage.getItem('hasilSkrining');
+            if (!raw) {
+                this.dataSkrining = null;
+                return;
+            }
+            try {
+                const data = JSON.parse(raw);
+                this.dataSkrining = data;
+                this.pasien = data.dataPasien || {};
+                this.hasil = data.hasil || {};
+
+                const dateObj = data.waktuSkrining ? new Date(data.waktuSkrining) : new Date();
+                this.tanggalFormatted = dateObj.toLocaleDateString('id-ID', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+
+                this.linkWA = this.faskesConfig.getLinkWA(this.pasien, this.hasil);
+            } catch (err) {
+                console.error('Error parsing hasil skrining:', err);
+                this.dataSkrining = null;
+            }
+        },
+
+        donutDash(score, max) {
+            const circumference = 2 * Math.PI * 38; // ~238.76
+            const pct = Math.min(Math.max((score / (max || 1)), 0), 1);
+            const filled = pct * circumference;
+            return filled + ' ' + circumference;
+        },
+
+        bagikanHasilWA() {
+            const statusText = this.hasil.berisiko ? 'BERISIKO' : 'TIDAK BERISIKO';
+            let t = `Halo, saya baru saja melakukan Skrining Mandiri Kesehatan Jiwa (%2A${this.hasil.instrumenLabel || 'Instrumen Klinis'}%2A).%0A%0A`;
+            t += `Hasil Skrining: *${statusText}* (${this.hasil.ringkasan || '-'})%0A`;
+            t += `Puskesmas Rujukan: *${this.faskesConfig.namaFaskes}*%0A%0A`;
+            t += `Skrining kesehatan jiwa mandiri gratis dapat diakses melalui portal resmi Puskesmas.`;
+            window.open('https://wa.me/?text=' + t, '_blank');
+        }
+    };
+}
+</script>
+
+</body>
+</html>

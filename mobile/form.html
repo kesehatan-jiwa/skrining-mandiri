@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Formulir Skrining Kesehatan Jiwa — Puskesmas Lok Bahu</title>
+    <link rel="stylesheet" href="../assets/css/mobile.css">
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/logic.js"></script>
+</head>
+<body x-data="mobileForm()" x-init="init()">
+
+    <!-- HEADER -->
+    <div class="mobile-header">
+        <div class="mobile-brand">
+            <img src="../assets/img/logopuskesmas.png" alt="Logo" style="height:24px;width:auto;object-fit:contain;margin-right:6px;background:rgba(255,255,255,0.9);padding:2px 4px;border-radius:4px">
+            <span x-text="instrumenLabel" style="font-size:.85rem"></span>
+        </div>
+        <a href="index.html" style="color:rgba(255,255,255,.8);font-size:.78rem">✕ Batal</a>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper-mobile" style="background:white;border-bottom:1px solid var(--gray-100)">
+        <div class="step-m" :class="{active:step>=1,done:step>1}">
+            <div class="step-m-num" x-text="step>1 ? '✓' : '1'"></div>
+            <div class="step-m-label">Data Diri</div>
+        </div>
+        <div class="step-m-line" :class="{done:step>1}"></div>
+        <div class="step-m" :class="{active:step>=2,done:step>2}">
+            <div class="step-m-num" x-text="step>2 ? '✓' : '2'"></div>
+            <div class="step-m-label">Kuesioner</div>
+        </div>
+        <div class="step-m-line" :class="{done:step>2}"></div>
+        <div class="step-m" :class="{active:step>=3}">
+            <div class="step-m-num">3</div>
+            <div class="step-m-label">Hasil</div>
+        </div>
+    </div>
+
+    <div class="content" style="padding-bottom: 5rem;">
+
+        <!-- ── STEP 1: DATA PASIEN ── -->
+        <div x-show="step===1" x-transition>
+            <div class="card">
+                <div class="card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                    Data Pasien
+                </div>
+                <div class="card-body">
+                    <div class="form-group-m">
+                        <label>Nama Lengkap <span style="color:red">*</span></label>
+                        <input type="text" x-model="dp.nama" placeholder="Nama lengkap Anda">
+                    </div>
+
+                    <div class="form-group-m" x-show="instrumen==='mindhear' && kelompokUsia==='5-9'" x-transition>
+                        <label>Nama Orang Tua / Pendamping <span style="color:red">*</span></label>
+                        <input type="text" x-model="dp.namaOrtu" placeholder="Nama ayah/ibu">
+                    </div>
+
+                    <div class="form-group-m">
+                        <label>NIK (Opsional)</label>
+                        <input type="text" x-model="dp.nik" maxlength="16" placeholder="16 digit NIK">
+                    </div>
+
+                    <div class="form-group-m">
+                        <label>Tanggal Lahir <span style="color:red">*</span></label>
+                        <input type="date" x-model="dp.tanggalLahir" @change="onTglLahir()" :max="today">
+                        <span style="font-size:.75rem;color:var(--gray-500);margin-top:.25rem" x-show="dp.usia" x-text="'Usia: ' + dp.usia + ' tahun'"></span>
+                    </div>
+
+                    <!-- JENIS KELAMIN: Jika bukan EPDS -->
+                    <div class="form-group-m" x-show="instrumen !== 'epds'">
+                        <label>Jenis Kelamin <span style="color:red">*</span></label>
+                        <select x-model="dp.jenisKelamin">
+                            <option value="">— Pilih —</option>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+
+                    <!-- KHUSUS EPDS: OTOMATIS PEREMPUAN -->
+                    <div class="form-group-m" x-show="instrumen === 'epds'">
+                        <label>Jenis Kelamin</label>
+                        <div style="padding:10px 12px;background:#fff1f2;border:1px solid #fecdd3;border-radius:10px;color:#be123c;font-weight:700;font-size:0.85rem">
+                            ♀ Perempuan (Khusus Ibu Hamil / Nifas)
+                        </div>
+                    </div>
+
+                    <div class="form-group-m">
+                        <label>No. HP / WhatsApp <span style="color:red">*</span></label>
+                        <input type="tel" x-model="dp.noHp" placeholder="08xxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group-m">
+                        <label>Alamat (Opsional)</label>
+                        <input type="text" x-model="dp.alamat" placeholder="Kelurahan / RT">
+                    </div>
+
+                    <div class="form-group-m" x-show="instrumen==='phq4'" x-transition>
+                        <label>Status Perkawinan</label>
+                        <select x-model="dp.statusKawin">
+                            <option value="">— Pilih —</option>
+                            <option value="Belum Menikah">Belum Menikah</option>
+                            <option value="Menikah">Menikah</option>
+                            <option value="Cerai Hidup">Cerai Hidup</option>
+                            <option value="Cerai Mati">Cerai Mati</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-m" x-show="instrumen==='epds'" x-transition>
+                        <label>Status Kehamilan / Nifas <span style="color:red">*</span></label>
+                        <select x-model="dp.statusKehamilan">
+                            <option value="">— Pilih Masa Kehamilan / Nifas —</option>
+                            <option value="Hamil Trimester I">Hamil Trimester I</option>
+                            <option value="Hamil Trimester II">Hamil Trimester II</option>
+                            <option value="Hamil Trimester III">Hamil Trimester III</option>
+                            <option value="Ibu Nifas (< 6 Bulan)">Ibu Nifas (< 6 Bulan)</option>
+                            <option value="Ibu Nifas (≥ 6 Bulan)">Ibu Nifas (≥ 6 Bulan)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-m" style="margin-top:.75rem">
+                        <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;font-size:.82rem;color:var(--gray-700)">
+                            <input type="checkbox" x-model="persetujuan" style="margin-top:2px;accent-color:var(--indigo-600)">
+                            <span>Saya menyatakan data yang diisi adalah benar untuk skrining kesehatan jiwa mandiri.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" @click="nextStep()" class="btn btn-primary btn-block" :disabled="!step1Valid()">
+                Lanjut ke Kuesioner →
+            </button>
+        </div>
+
+        <!-- ── STEP 2: KUESIONER ── -->
+        <div x-show="step===2" x-transition>
+            
+            <!-- PHQ-4 -->
+            <template x-if="instrumen==='phq4'">
+                <div>
+                    <div style="font-size:.82rem;color:var(--gray-600);margin-bottom:.75rem">Selama <strong>2 minggu terakhir</strong>, seberapa sering Anda terganggu oleh:</div>
+                    <template x-for="q in phq4Questions" :key="q.id">
+                        <div class="q-card-m">
+                            <div class="q-header-m">
+                                <span class="q-num-m" x-text="q.no"></span>
+                                <span class="q-text-m" x-text="q.teks"></span>
+                            </div>
+                            <div class="opt-grid-m">
+                                <template x-for="o in likertPHQ4" :key="o.val">
+                                    <div class="opt-btn-m" :class="{selected:jawaban[q.id]===o.val}" @click="jawaban[q.id]=o.val" x-text="o.label"></div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- EPDS -->
+            <template x-if="instrumen==='epds'">
+                <div>
+                    <div style="font-size:.82rem;color:var(--gray-600);margin-bottom:.75rem">Selama <strong>7 hari terakhir</strong>, pilihlah yang paling sesuai:</div>
+                    <template x-for="q in epdsQuestions" :key="q.id">
+                        <div class="q-card-m">
+                            <div class="q-header-m">
+                                <span class="q-num-m" x-text="'No. '+q.no"></span>
+                                <span class="q-text-m" x-text="q.teks"></span>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:.4rem">
+                                <template x-for="o in q.opsi" :key="o.nilai">
+                                    <div class="opt-btn-m" style="text-align:left;padding:.65rem .85rem;display:flex;justify-content:space-between"
+                                         :class="{selected:jawaban[q.id]===o.nilai}" @click="jawaban[q.id]=o.nilai">
+                                        <span x-text="o.teks"></span>
+                                        <span style="font-weight:700;font-size:.72rem;opacity:.7" x-text="o.nilai"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- MINDHEAR -->
+            <template x-if="instrumen==='mindhear'">
+                <div>
+                    <div style="font-weight:700;font-size:.85rem;color:var(--indigo-800);margin-bottom:.5rem">Skala A — Ansietas</div>
+                    <template x-for="q in mindhearA" :key="q.id">
+                        <div class="q-card-m">
+                            <div class="q-header-m">
+                                <span class="q-num-m" x-text="q.no"></span>
+                                <span class="q-text-m" x-text="q.teks"></span>
+                            </div>
+                            <div class="yn-grid-m">
+                                <div class="yn-btn-m ya" :class="{selected:jawaban[q.id]==='ya'}" @click="jawaban[q.id]='ya'">✓ Ya</div>
+                                <div class="yn-btn-m tdk" :class="{selected:jawaban[q.id]==='tidak'}" @click="jawaban[q.id]='tidak'">✗ Tidak</div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div style="font-weight:700;font-size:.85rem;color:var(--violet-800);margin:.75rem 0 .5rem">Skala B — Depresi</div>
+                    <template x-for="q in mindhearB" :key="q.id">
+                        <div class="q-card-m">
+                            <div class="q-header-m">
+                                <span class="q-num-m" x-text="q.no"></span>
+                                <span class="q-text-m" x-text="q.teks"></span>
+                            </div>
+                            <div class="yn-grid-m">
+                                <div class="yn-btn-m ya" :class="{selected:jawaban[q.id]==='ya'}" @click="jawaban[q.id]='ya'">✓ Ya</div>
+                                <div class="yn-btn-m tdk" :class="{selected:jawaban[q.id]==='tidak'}" @click="jawaban[q.id]='tidak'">✗ Tidak</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <div style="display:flex;gap:.75rem;margin-top:1rem">
+                <button type="button" @click="prevStep()" class="btn btn-secondary" style="flex:1">← Kembali</button>
+                <button type="button" @click="submit()" class="btn btn-primary" style="flex:2" :disabled="!step2Valid()">Lihat Hasil ✓</button>
+            </div>
+        </div>
+
+        <!-- ── STEP 3: PROSES ── -->
+        <div x-show="step===3" style="text-align:center;padding:3rem 1rem">
+            <div style="font-size:1.1rem;font-weight:700;color:var(--indigo-800)">Memproses Data...</div>
+            <div style="font-size:.82rem;color:var(--gray-500);margin-top:.4rem">Mohon tunggu sebentar</div>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="bottom-nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Beranda</span>
+        </a>
+        <a href="#" class="bottom-nav-item active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            <span>Skrining</span>
+        </a>
+        <a href="hasil.html" class="bottom-nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <span>Hasil</span>
+        </a>
+    </nav>
+
+    <script>
+    function mobileForm() {
+        return {
+            step: 1,
+            instrumen: 'phq4',
+            instrumenLabel: '',
+            today: new Date().toISOString().split('T')[0],
+            persetujuan: false,
+            kelompokUsia: '',
+            dp: { nama:'', nik:'', tanggalLahir:'', usia:'', jenisKelamin:'', noHp:'', alamat:'', statusKawin:'', statusKehamilan:'', namaOrtu:'' },
+            jawaban: {},
+
+            likertPHQ4: [
+                { val: 0, label: 'Tdk Pernah' },
+                { val: 1, label: 'Bebrp Hari' },
+                { val: 2, label: 'Separuh Waktu' },
+                { val: 3, label: 'Tiap Hari' }
+            ],
+            phq4Questions: [
+                { id:'q1', no:'1', teks:'Kurang berminat atau bergairah melakukan hal-hal yang menyenangkan.' },
+                { id:'q2', no:'2', teks:'Merasa sedih, murung, tertekan, atau putus asa.' },
+                { id:'q3', no:'3', teks:'Merasa gelisah, cemas, atau sangat tegang.' },
+                { id:'q4', no:'4', teks:'Tidak mampu menghentikan atau mengendalikan rasa khawatir.' }
+            ],
+            epdsQuestions: [
+                { id:'q1', no:1, teks:'Saya mampu tertawa dan melihat sisi lucu dari berbagai hal:',
+                  opsi:[{nilai:0,teks:'Sama seperti biasanya'},{nilai:1,teks:'Tidak begitu banyak sekarang'},{nilai:2,teks:'Jelas tidak begitu banyak'},{nilai:3,teks:'Tidak bisa sama sekali'}] },
+                { id:'q2', no:2, teks:'Saya melihat masa depan dengan penuh harapan:',
+                  opsi:[{nilai:0,teks:'Sebanyak biasanya'},{nilai:1,teks:'Agak kurang'},{nilai:2,teks:'Jelas kurang'},{nilai:3,teks:'Hampir tidak pernah'}] },
+                { id:'q3', no:3, teks:'Saya menyalahkan diri sendiri secara tidak wajar saat ada masalah:',
+                  opsi:[{nilai:3,teks:'Ya, sebagian besar waktu'},{nilai:2,teks:'Ya, beberapa kali'},{nilai:1,teks:'Tidak terlalu sering'},{nilai:0,teks:'Tidak pernah'}] },
+                { id:'q4', no:4, teks:'Saya merasa cemas atau khawatir tanpa alasan yang jelas:',
+                  opsi:[{nilai:0,teks:'Tidak sama sekali'},{nilai:1,teks:'Hampir tidak pernah'},{nilai:2,teks:'Ya, kadang-kadang'},{nilai:3,teks:'Ya, sangat sering'}] },
+                { id:'q5', no:5, teks:'Saya merasa takut atau panik tanpa alasan yang sangat jelas:',
+                  opsi:[{nilai:3,teks:'Ya, cukup sering'},{nilai:2,teks:'Ya, kadang-kadang'},{nilai:1,teks:'Tidak banyak'},{nilai:0,teks:'Tidak sama sekali'}] },
+                { id:'q6', no:6, teks:'Hal-hal yang dihadapi terasa begitu menumpuk dan membebani:',
+                  opsi:[{nilai:3,teks:'Ya, tidak mampu mengatasinya'},{nilai:2,teks:'Kadang tidak mampu mengatasi'},{nilai:1,teks:'Sebagian besar mampu'},{nilai:0,teks:'Mengatasinya sebaik biasanya'}] },
+                { id:'q7', no:7, teks:'Saya merasa sangat tidak bahagia sehingga sulit tidur:',
+                  opsi:[{nilai:3,teks:'Ya, sebagian besar waktu'},{nilai:2,teks:'Ya, kadang-kadang'},{nilai:1,teks:'Tidak terlalu sering'},{nilai:0,teks:'Tidak sama sekali'}] },
+                { id:'q8', no:8, teks:'Saya merasa sedih atau sengsara:',
+                  opsi:[{nilai:3,teks:'Ya, hampir sepanjang waktu'},{nilai:2,teks:'Ya, cukup sering'},{nilai:1,teks:'Tidak terlalu sering'},{nilai:0,teks:'Tidak sama sekali'}] },
+                { id:'q9', no:9, teks:'Saya merasa sangat tidak bahagia sehingga menangis:',
+                  opsi:[{nilai:3,teks:'Ya, hampir sepanjang waktu'},{nilai:2,teks:'Ya, cukup sering'},{nilai:1,teks:'Hanya sesekali'},{nilai:0,teks:'Tidak pernah'}] },
+                { id:'q10', no:10, teks:'Pikiran untuk mencelakai diri sendiri pernah terlintas di benak saya:',
+                  opsi:[{nilai:3,teks:'Ya, cukup sering'},{nilai:2,teks:'Kadang-kadang'},{nilai:1,teks:'Hampir tidak pernah'},{nilai:0,teks:'Tidak pernah sama sekali'}] }
+            ],
+            mindhearA: [
+                { id:'a1', no:'1A', teks:'Sering merasa gelisah, tidak tenang, atau sulit diam?' },
+                { id:'a2', no:'2A', teks:'Sering merasa cemas berlebihan mengenai masa depan?' },
+                { id:'a3', no:'3A', teks:'Otot tubuh sering terasa tegang saat memikirkan sesuatu?' }
+            ],
+            mindhearB: [
+                { id:'b1', no:'1B', teks:'Sering merasa sedih atau ingin menangis tanpa sebab jelas?' },
+                { id:'b2', no:'2B', teks:'Kehilangan minat terhadap hal yang biasanya disukai?' },
+                { id:'b3', no:'3B', teks:'Merasa cepat lelah atau kehilangan energi secara drastis?' }
+            ],
+
+            init() {
+                const p = new URLSearchParams(window.location.search);
+                this.instrumen = p.get('t') || 'phq4';
+                if (this.instrumen === 'phq4') this.instrumenLabel = 'Skrining PHQ-4 (Dewasa)';
+                else if (this.instrumen === 'epds') {
+                    this.instrumenLabel = 'Skrining EPDS (Ibu Hamil)';
+                    this.dp.jenisKelamin = 'P'; // FIXED
+                }
+                else this.instrumenLabel = 'Mini MINDHEAR (Remaja)';
+            },
+
+            onTglLahir() {
+                const u = window.SKRINING_LOGIC.hitungUsia(this.dp.tanggalLahir);
+                this.dp.usia = u;
+                if (this.instrumen === 'mindhear') this.kelompokUsia = window.SKRINING_LOGIC.kategoriUsiaMindhear(u);
+            },
+
+            step1Valid() {
+                const d = this.dp;
+                if (!d.nama || !d.tanggalLahir || !d.noHp || !this.persetujuan) return false;
+                if (this.instrumen !== 'epds' && !d.jenisKelamin) return false;
+                if (this.instrumen === 'epds' && !d.statusKehamilan) return false;
+                if (this.instrumen === 'mindhear' && this.kelompokUsia === '5-9' && !d.namaOrtu) return false;
+                return true;
+            },
+
+            step2Valid() {
+                if (this.instrumen === 'phq4') return ['q1','q2','q3','q4'].every(k => this.jawaban[k] !== undefined && this.jawaban[k] !== null);
+                if (this.instrumen === 'epds') return Array.from({length:10}, (_,i) => 'q'+(i+1)).every(k => this.jawaban[k] !== undefined && this.jawaban[k] !== null);
+                if (this.instrumen === 'mindhear') return ['a1','a2','a3','b1','b2','b3'].every(k => this.jawaban[k]);
+                return false;
+            },
+
+            prevStep() { if (this.step > 1) { this.step--; window.scrollTo(0,0); } },
+            nextStep() { if (this.step1Valid()) { this.step = 2; window.scrollTo(0,0); } },
+
+            async submit() {
+                this.step = 3;
+                const L = window.SKRINING_LOGIC;
+                let h;
+                if (this.instrumen === 'phq4') h = L.hitungPHQ4(this.jawaban);
+                else if (this.instrumen === 'epds') h = L.hitungEPDS(this.jawaban);
+                else h = L.hitungMINDHEAR(this.jawaban, this.kelompokUsia);
+
+                sessionStorage.setItem('hasilSkrining', JSON.stringify({
+                    dataPasien: this.dp,
+                    hasil: h,
+                    waktuSkrining: new Date().toISOString()
+                }));
+
+                try {
+                    await window.FASKES_CONFIG.kirimKeGoogleSheets(L.buildPayload(this.instrumen, this.dp, h));
+                } catch(e) {}
+
+                window.location.href = 'hasil.html';
+            }
+        };
+    }
+    </script>
+</body>
+</html>

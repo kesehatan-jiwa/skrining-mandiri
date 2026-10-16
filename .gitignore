@@ -1,0 +1,12 @@
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Temp files
+scratch/
+__pycache__/
+*.pyc
