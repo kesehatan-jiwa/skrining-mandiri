@@ -33,9 +33,13 @@ function doPost(e) {
       sheet = ss.getSheetByName("Semua_Data");
     }
 
-    var data;
+    var data = {};
     if (e && e.postData && e.postData.contents) {
-      data = JSON.parse(e.postData.contents);
+      try {
+        data = JSON.parse(e.postData.contents);
+      } catch (errJson) {
+        data = e.parameter || {};
+      }
     } else if (e && e.parameter) {
       data = e.parameter;
     } else {
@@ -302,7 +306,11 @@ function setupSpreadsheet() {
   ]]).setFontWeight("bold").setBackground("#1e1b4b").setFontColor("#ffffff");
   mh.setFrozenRows(1);
 
-  SpreadsheetApp.getUi().alert("✅ Inisialisasi Berhasil!", 
-    "Sheet 'Dashboard_Grafik' (dengan Diagram Bulat), 'Semua_Data', dan detail instrumen telah siap digunakan.\\n\\nLangkah selanjutnya:\\nKlik Deploy > New Deployment > Web App (Who has access: Anyone) untuk mendapatkan Web App URL.",
-    SpreadsheetApp.getUi().ButtonSet.OK);
+  try {
+    SpreadsheetApp.getUi().alert("✅ Inisialisasi Berhasil!", 
+      "Sheet 'Dashboard_Grafik' (dengan Diagram Bulat), 'Semua_Data', dan detail instrumen telah siap digunakan.\\n\\nLangkah selanjutnya:\\nKlik Deploy > New Deployment > Web App (Who has access: Anyone) untuk mendapatkan Web App URL.",
+      SpreadsheetApp.getUi().ButtonSet.OK);
+  } catch (uiErr) {
+    Logger.log("✅ Inisialisasi Berhasil! Sheet siap digunakan.");
+  }
 }
