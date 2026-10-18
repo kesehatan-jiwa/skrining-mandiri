@@ -145,6 +145,7 @@ window.SKRINING_LOGIC = {
             jenisKelamin:  dataPasien.jenisKelamin === "L" ? "Laki-laki" : "Perempuan",
             noHp:          dataPasien.noHp   || "",
             alamat:        dataPasien.alamat || "",
+            statusKawin:   dataPasien.statusKawin || "",
             berisiko:      hasil.berisiko ? "YA" : "TIDAK",
             ringkasan:     hasil.ringkasan || ""
         };

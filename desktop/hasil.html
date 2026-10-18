@@ -267,7 +267,7 @@
                             </div>
                             <div class="summary-item">
                                 <span class="si-label">NIK</span>
-                                <div class="si-val" x-text="pasien.nik || 'Tidak Dicantumkan'"></div>
+                                <div class="si-val" x-text="pasien.nik || '-'"></div>
                             </div>
                             <div class="summary-item">
                                 <span class="si-label">Usia Responden</span>
@@ -278,6 +278,14 @@
                                 <div class="si-val" x-text="pasien.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'"></div>
                             </div>
                             <div class="summary-item">
+                                <span class="si-label">Status Perkawinan</span>
+                                <div class="si-val" x-text="pasien.statusKawin || '-'"></div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="si-label">Alamat Domisili</span>
+                                <div class="si-val" x-text="pasien.alamat || '-'"></div>
+                            </div>
+                            <div class="summary-item">
                                 <span class="si-label">No. WhatsApp / HP</span>
                                 <div class="si-val" x-text="pasien.noHp || '-'"></div>
                             </div>
@@ -285,9 +293,9 @@
                                 <span class="si-label">Instrumen</span>
                                 <div class="si-val" x-text="hasil.instrumenLabel || '-'"></div>
                             </div>
-                            <div class="summary-item">
-                                <span class="si-label">Status Khusus</span>
-                                <div class="si-val" x-text="pasien.statusKehamilan || pasien.statusKawin || hasil.kelompokUsia || '-'"></div>
+                            <div class="summary-item" x-show="pasien.statusKehamilan">
+                                <span class="si-label">Status Kehamilan</span>
+                                <div class="si-val" x-text="pasien.statusKehamilan || '-'"></div>
                             </div>
                             <div class="summary-item">
                                 <span class="si-label">Hasil Penapisan</span>

@@ -20,8 +20,12 @@ window.FASKES_CONFIG = {
         let t = `Halo Petugas ${this.namaFaskes}, saya telah mengisi formulir Skrining Kesehatan Jiwa Mandiri melalui website.%0A%0A`;
         t += `*Ringkasan Data Skrining:*%0A`;
         t += `\u2022 Nama: ${dataPasien.nama || "-"}%0A`;
+        t += `\u2022 NIK: ${dataPasien.nik || "-"}%0A`;
         t += `\u2022 Tanggal Lahir: ${dataPasien.tanggalLahir || "-"} (${dataPasien.usia || "-"} Tahun)%0A`;
-        t += `\u2022 No. HP: ${dataPasien.noHp || "-"}%0A`;
+        t += `\u2022 Jenis Kelamin: ${dataPasien.jenisKelamin === "L" ? "Laki-laki" : "Perempuan"}%0A`;
+        t += `\u2022 Status Perkawinan: ${dataPasien.statusKawin || "-"}${dataPasien.statusKehamilan ? " (" + dataPasien.statusKehamilan + ")" : ""}%0A`;
+        t += `\u2022 Alamat Domisili: ${dataPasien.alamat || "-"}%0A`;
+        t += `\u2022 No. WhatsApp: ${dataPasien.noHp || "-"}%0A`;
         t += `\u2022 Instrumen: ${hasil.instrumenLabel || "-"}%0A`;
         t += `\u2022 Tanggal Skrining: ${tgl}%0A`;
         t += `\u2022 Hasil: *${hasil.ringkasan || "-"}*%0A`;

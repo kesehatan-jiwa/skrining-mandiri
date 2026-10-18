@@ -221,7 +221,7 @@
                         </div>
                         <div class="data-row-m">
                             <span class="data-key-m">NIK</span>
-                            <span class="data-val-m" x-text="dp.nik || 'Tidak Dicantumkan'"></span>
+                            <span class="data-val-m" x-text="dp.nik || '-'"></span>
                         </div>
                         <div class="data-row-m">
                             <span class="data-key-m">Tanggal Lahir</span>
@@ -231,17 +231,21 @@
                             <span class="data-key-m">Jenis Kelamin</span>
                             <span class="data-val-m" x-text="dp.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'"></span>
                         </div>
+                        <div class="data-row-m" x-show="dp.statusKawin">
+                            <span class="data-key-m">Status Perkawinan</span>
+                            <span class="data-val-m" x-text="dp.statusKawin"></span>
+                        </div>
+                        <div class="data-row-m" x-show="dp.statusKehamilan">
+                            <span class="data-key-m">Status Kehamilan</span>
+                            <span class="data-val-m" x-text="dp.statusKehamilan"></span>
+                        </div>
+                        <div class="data-row-m">
+                            <span class="data-key-m">Alamat Domisili</span>
+                            <span class="data-val-m" x-text="dp.alamat || '-'"></span>
+                        </div>
                         <div class="data-row-m">
                             <span class="data-key-m">No. WhatsApp</span>
                             <span class="data-val-m" x-text="dp.noHp || '-'"></span>
-                        </div>
-                        <div class="data-row-m" x-show="dp.alamat">
-                            <span class="data-key-m">Alamat</span>
-                            <span class="data-val-m" x-text="dp.alamat"></span>
-                        </div>
-                        <div class="data-row-m" x-show="dp.statusKehamilan">
-                            <span class="data-key-m">Status</span>
-                            <span class="data-val-m" x-text="dp.statusKehamilan"></span>
                         </div>
                         <div class="data-row-m">
                             <span class="data-key-m">Instrumen</span>

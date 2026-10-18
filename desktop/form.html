@@ -87,9 +87,9 @@
 
                         <!-- NIK -->
                         <div class="form-group">
-                            <label>Nomor Induk Kependudukan (NIK)</label>
-                            <input type="text" x-model="dp.nik" maxlength="16" placeholder="16 digit NIK KTP / KK" autocomplete="off">
-                            <span class="input-hint">Opsional (untuk integrasi rekam medis Puskesmas)</span>
+                            <label>Nomor Induk Kependudukan (NIK) <span class="req">*</span></label>
+                            <input type="text" x-model="dp.nik" maxlength="16" inputmode="numeric" @input="dp.nik = dp.nik.replace(/\D/g, '')" placeholder="16 digit NIK KTP / KK" autocomplete="off">
+                            <span class="input-hint">Wajib diisi 16 digit angka sesuai KTP / Kartu Keluarga</span>
                         </div>
 
                         <!-- Tanggal Lahir -->
@@ -139,11 +139,11 @@
                             </select>
                         </div>
 
-                        <!-- Status Perkawinan (PHQ-4) -->
-                        <div class="form-group" x-show="instrumen==='phq4'" x-transition>
-                            <label>Status Perkawinan</label>
+                        <!-- Status Perkawinan -->
+                        <div class="form-group" x-show="instrumen !== 'mindhear'" x-transition>
+                            <label>Status Perkawinan <span class="req">*</span></label>
                             <select x-model="dp.statusKawin">
-                                <option value="">— Pilih Status —</option>
+                                <option value="">— Pilih Status Perkawinan —</option>
                                 <option value="Belum Menikah">Belum Menikah</option>
                                 <option value="Menikah">Menikah</option>
                                 <option value="Cerai Hidup">Cerai Hidup</option>
@@ -153,8 +153,9 @@
 
                         <!-- Alamat Lengkap -->
                         <div class="form-group span-2">
-                            <label>Alamat Domisili</label>
+                            <label>Alamat Domisili <span class="req">*</span></label>
                             <input type="text" x-model="dp.alamat" placeholder="Jalan, RT, Kelurahan di wilayah Samarinda" autocomplete="off">
+                            <span class="input-hint">Wajib diisi untuk keperluan pencatatan dan rujukan faskes</span>
                         </div>
 
                         <!-- Persetujuan Responden -->
@@ -489,6 +490,7 @@ function formApp() {
             } else if (this.instrumen === 'mindhear') {
                 this.instrumenLabel = 'Mini MINDHEAR Youth Scale (Anak & Remaja)';
                 this.instrumenInfo = 'Mini MINDHEAR Youth Scale mengevaluasi 3 gejala ansietas dan 3 gejala depresi untuk populasi anak & remaja usia 5–18 tahun.';
+                this.dp.statusKawin = 'Belum Menikah';
             }
         },
 
@@ -497,12 +499,16 @@ function formApp() {
             this.dp.usia = usia;
             if (this.instrumen === 'mindhear') {
                 this.kelompokUsia = window.SKRINING_LOGIC.kategoriUsiaMindhear(usia);
+                if (!this.dp.statusKawin) this.dp.statusKawin = 'Belum Menikah';
             }
         },
 
         step1Valid() {
             const d = this.dp;
             if (!d.nama || !d.tanggalLahir || !d.noHp || !this.persetujuan) return false;
+            if (!d.nik || d.nik.trim().length !== 16) return false;
+            if (!d.alamat || !d.alamat.trim()) return false;
+            if (this.instrumen !== 'mindhear' && !d.statusKawin) return false;
             if (this.instrumen !== 'epds' && !d.jenisKelamin) return false;
             if (this.instrumen === 'epds' && !d.statusKehamilan) return false;
             if (this.instrumen === 'mindhear' && this.kelompokUsia === '5-9' && !d.namaOrtu) return false;
@@ -530,10 +536,50 @@ function formApp() {
         },
 
         nextStep() {
-            if (this.step1Valid()) {
-                this.step = 2;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            const d = this.dp;
+            if (!d.nama || !d.nama.trim()) {
+                alert('Silakan masukkan nama lengkap Anda.');
+                return;
             }
+            if (!d.nik || d.nik.trim().length !== 16) {
+                alert('Nomor Induk Kependudukan (NIK) wajib diisi tepat 16 digit angka sesuai KTP/KK.');
+                return;
+            }
+            if (!d.tanggalLahir) {
+                alert('Silakan pilih tanggal lahir Anda.');
+                return;
+            }
+            if (this.instrumen !== 'epds' && !d.jenisKelamin) {
+                alert('Silakan pilih jenis kelamin.');
+                return;
+            }
+            if (!d.noHp || !d.noHp.trim()) {
+                alert('Nomor WhatsApp aktif wajib diisi.');
+                return;
+            }
+            if (this.instrumen === 'epds' && !d.statusKehamilan) {
+                alert('Silakan pilih masa kehamilan / nifas.');
+                return;
+            }
+            if (this.instrumen !== 'mindhear' && !d.statusKawin) {
+                alert('Silakan pilih status perkawinan Anda.');
+                return;
+            }
+            if (!d.alamat || !d.alamat.trim()) {
+                alert('Alamat domisili wajib diisi.');
+                return;
+            }
+            if (this.instrumen === 'mindhear' && this.kelompokUsia === '5-9' && !d.namaOrtu) {
+                alert('Nama orang tua / wali pendamping wajib diisi untuk anak usia 5–9 tahun.');
+                return;
+            }
+            if (!this.persetujuan) {
+                alert('Silakan centang persetujuan pernyataan responden sebelum melanjutkan.');
+                return;
+            }
+
+            this.step = 2;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
         async submitForm() {
