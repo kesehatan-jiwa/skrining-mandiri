@@ -16,23 +16,17 @@ window.FASKES_CONFIG = {
     },
 
     buatPesanWhatsApp(dataPasien, hasil) {
-        const tgl = new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
-        let t = `Halo Petugas ${this.namaFaskes}, saya telah mengisi formulir Skrining Kesehatan Jiwa Mandiri melalui website.%0A%0A`;
-        t += `*Ringkasan Data Skrining:*%0A`;
+        let t = `Halo Petugas ${this.namaFaskes}, saya telah mengisi Skrining Kesehatan Jiwa Mandiri.%0A%0A`;
+        t += `*Data Pasien:*%0A`;
         t += `\u2022 Nama: ${dataPasien.nama || "-"}%0A`;
         t += `\u2022 NIK: ${dataPasien.nik || "-"}%0A`;
-        t += `\u2022 Tanggal Lahir: ${dataPasien.tanggalLahir || "-"} (${dataPasien.usia || "-"} Tahun)%0A`;
-        t += `\u2022 Jenis Kelamin: ${dataPasien.jenisKelamin === "L" ? "Laki-laki" : "Perempuan"}%0A`;
-        t += `\u2022 Status Perkawinan: ${dataPasien.statusKawin || "-"}${dataPasien.statusKehamilan ? " (" + dataPasien.statusKehamilan + ")" : ""}%0A`;
-        t += `\u2022 Alamat Domisili: ${dataPasien.alamat || "-"}%0A`;
-        t += `\u2022 No. WhatsApp: ${dataPasien.noHp || "-"}%0A`;
-        t += `\u2022 Instrumen: ${hasil.instrumenLabel || "-"}%0A`;
-        t += `\u2022 Tanggal Skrining: ${tgl}%0A`;
-        t += `\u2022 Hasil: *${hasil.ringkasan || "-"}*%0A`;
+        t += `\u2022 Status Kawin: ${dataPasien.statusKawin || "-"}${dataPasien.statusKehamilan ? " (" + dataPasien.statusKehamilan + ")" : ""}%0A`;
+        t += `\u2022 Alamat: ${dataPasien.alamat || "-"}%0A%0A`;
+        t += `*Hasil Skrining:* *${hasil.ringkasan || "-"}*%0A`;
         if (hasil.instrumen === "epds" && hasil.q10Positif) {
             t += `%0A\u26a0\ufe0f *PERHATIAN: Ada indikasi pikiran mencelakai diri \u2014 mohon penanganan segera!*%0A`;
         }
-        t += `%0AMohon arahan dan informasi selanjutnya dari ${this.namaFaskes}. Terima kasih.`;
+        t += `%0AMohon arahan selanjutnya. Terima kasih.`;
         return t;
     },
     getLinkWA(dataPasien, hasil) {
