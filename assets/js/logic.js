@@ -139,6 +139,8 @@ window.SKRINING_LOGIC = {
             instrumen:     instrumen.toUpperCase(),
             waktuSkrining: new Date().toLocaleString("id-ID"),
             nama:          dataPasien.nama || "",
+            asalSekolah:   dataPasien.asalSekolah || "",
+            kelas:         dataPasien.kelas || "",
             nik:           dataPasien.nik  || "",
             tanggalLahir:  dataPasien.tanggalLahir || "",
             usia:          dataPasien.usia || "",

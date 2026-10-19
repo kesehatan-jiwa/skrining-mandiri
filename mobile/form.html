@@ -66,6 +66,19 @@
                         <span class="input-hint">Anak usia 5–9 tahun wajib didampingi orang tua.</span>
                     </div>
 
+                    <!-- Asal Sekolah & Kelas (Khusus PHQ-4 & MINDHEAR) -->
+                    <div class="form-group-m" x-show="instrumen==='phq4' || instrumen==='mindhear'" x-transition>
+                        <label>Asal Sekolah <span style="color:var(--danger)">*</span></label>
+                        <input type="text" x-model="dp.asalSekolah" placeholder="Contoh: SMPN 1 / SMKN 15 Samarinda" autocomplete="off">
+                        <span class="input-hint">Wajib diisi untuk keperluan pencatatan faskes.</span>
+                    </div>
+
+                    <div class="form-group-m" x-show="instrumen==='phq4' || instrumen==='mindhear'" x-transition>
+                        <label>Kelas <span style="color:var(--danger)">*</span></label>
+                        <input type="text" x-model="dp.kelas" placeholder="Contoh: VII B / X IPA 1 / Kuliah" autocomplete="off">
+                        <span class="input-hint">Tingkat kelas / jenjang saat ini.</span>
+                    </div>
+
                     <div class="form-group-m">
                         <label>NIK <span style="color:var(--danger)">*</span></label>
                         <input type="text" x-model="dp.nik" maxlength="16" inputmode="numeric" @input="dp.nik = dp.nik.replace(/\D/g, '')" placeholder="16 digit NIK KTP / KK" autocomplete="off">
@@ -311,7 +324,7 @@
             kelompokUsia: '',
 
             dp: {
-                nama: '', nik: '', tanggalLahir: '', usia: '',
+                nama: '', asalSekolah: '', kelas: '', nik: '', tanggalLahir: '', usia: '',
                 jenisKelamin: '', noHp: '', alamat: '',
                 statusKawin: '', statusKehamilan: '', namaOrtu: ''
             },
@@ -397,6 +410,8 @@
                 if (!d.nama || !d.tanggalLahir || !d.noHp || !this.persetujuan) return false;
                 if (!d.nik || d.nik.trim().length !== 16) return false;
                 if (!d.alamat || !d.alamat.trim()) return false;
+                if ((this.instrumen === 'phq4' || this.instrumen === 'mindhear') && (!d.asalSekolah || !d.asalSekolah.trim())) return false;
+                if ((this.instrumen === 'phq4' || this.instrumen === 'mindhear') && (!d.kelas || !d.kelas.trim())) return false;
                 if (this.instrumen !== 'mindhear' && !d.statusKawin) return false;
                 if (this.instrumen !== 'epds' && !d.jenisKelamin) return false;
                 if (this.instrumen === 'epds' && !d.statusKehamilan) return false;
@@ -425,6 +440,16 @@
                 if (!d.nama || !d.nama.trim()) {
                     alert('Silakan masukkan nama lengkap Anda.');
                     return;
+                }
+                if (this.instrumen === 'phq4' || this.instrumen === 'mindhear') {
+                    if (!d.asalSekolah || !d.asalSekolah.trim()) {
+                        alert('Asal sekolah wajib diisi.');
+                        return;
+                    }
+                    if (!d.kelas || !d.kelas.trim()) {
+                        alert('Kelas wajib diisi.');
+                        return;
+                    }
                 }
                 if (!d.nik || d.nik.trim().length !== 16) {
                     alert('NIK wajib diisi tepat 16 digit angka sesuai KTP/KK.');

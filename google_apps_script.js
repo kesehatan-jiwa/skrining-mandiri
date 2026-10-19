@@ -59,6 +59,14 @@ function doPost(e) {
       catatanKhusus = "⚠️ PERINGATAN: Ada ide mencelakai diri (EPDS Q10)! Segera hubungi pasien.";
     }
 
+    // Siapkan keterangan tambahan (Sekolah, Kelas, Ortu, Catin)
+    var infoSekolahOrtu = [];
+    if (data.asalSekolah) infoSekolahOrtu.push("Sekolah: " + data.asalSekolah);
+    if (data.kelas) infoSekolahOrtu.push("Kelas: " + data.kelas);
+    if (data.namaOrtu) infoSekolahOrtu.push("Ortu: " + data.namaOrtu);
+    if (data.calonPengantin) infoSekolahOrtu.push("Catin: " + data.calonPengantin);
+    var ketTambahan = infoSekolahOrtu.length > 0 ? infoSekolahOrtu.join(" | ") : "-";
+
     // Siapkan baris data untuk "Semua_Data"
     var rowData = [
       waktuStr,
@@ -73,7 +81,7 @@ function doPost(e) {
       data.noHp ? "'" + data.noHp : "-",
       data.alamat || "-",
       data.statusKawin || data.statusKehamilan || data.kelompokUsia || "-",
-      data.calonPengantin || data.namaOrtu || "-",
+      ketTambahan,
       data.skorDepresi !== undefined ? ("Depresi: " + data.skorDepresi + " (" + (data.hasilDepresi || "") + "), Cemas: " + data.skorKecemasan + " (" + (data.hasilKecemasan || "") + ")")
         : (data.totalSkor !== undefined ? ("Skor EPDS: " + data.totalSkor + " - " + (data.interpretasi || ""))
         : (data.hasilAnsietas ? ("Ansietas: " + data.hasilAnsietas + ", Depresi: " + data.hasilDepresi) : "-")),
@@ -136,7 +144,7 @@ function simpanKeSheetInstrumen(ss, data, waktuStr, statusRisiko) {
 
   if (sheetName === "Detail_PHQ4") {
     sh.appendRow([
-      waktuStr, data.nama, "'" + data.noHp, statusRisiko,
+      waktuStr, data.nama, data.asalSekolah || "-", data.kelas || "-", "'" + data.noHp, statusRisiko,
       data.skorDepresi, data.hasilDepresi,
       data.skorKecemasan, data.hasilKecemasan,
       data.q1, data.q2, data.q3, data.q4
@@ -149,7 +157,7 @@ function simpanKeSheetInstrumen(ss, data, waktuStr, statusRisiko) {
     ]);
   } else if (sheetName === "Detail_MINDHEAR") {
     sh.appendRow([
-      waktuStr, data.nama, "'" + data.noHp, statusRisiko,
+      waktuStr, data.nama, data.asalSekolah || "-", data.kelas || "-", "'" + data.noHp, statusRisiko,
       data.kelompokUsia, data.namaOrtu,
       data.hasilAnsietas, data.hasilDepresi,
       data.a1, data.a2, data.a3, data.b1, data.b2, data.b3
@@ -277,8 +285,8 @@ function setupSpreadsheet() {
   // 3. SETUP TAB DETAIL PHQ4
   var phq = ss.getSheetByName("Detail_PHQ4");
   if (!phq) phq = ss.insertSheet("Detail_PHQ4", 2);
-  phq.getRange(1, 1, 1, 12).setValues([[
-    "Waktu", "Nama Pasien", "No HP", "Status",
+  phq.getRange(1, 1, 1, 14).setValues([[
+    "Waktu", "Nama Pasien", "Asal Sekolah", "Kelas", "No HP", "Status",
     "Skor Depresi (PHQ-2)", "Hasil Depresi",
     "Skor Cemas (GAD-2)", "Hasil Cemas",
     "Q1 (Minat)", "Q2 (Murung)", "Q3 (Cemas)", "Q4 (Khawatir)"
@@ -298,8 +306,8 @@ function setupSpreadsheet() {
   // 5. SETUP TAB DETAIL MINDHEAR
   var mh = ss.getSheetByName("Detail_MINDHEAR");
   if (!mh) mh = ss.insertSheet("Detail_MINDHEAR", 4);
-  mh.getRange(1, 1, 1, 14).setValues([[
-    "Waktu", "Nama Pasien", "No HP", "Status", "Kelompok Usia", "Nama Orang Tua",
+  mh.getRange(1, 1, 1, 16).setValues([[
+    "Waktu", "Nama Pasien", "Asal Sekolah", "Kelas", "No HP", "Status", "Kelompok Usia", "Nama Orang Tua",
     "Hasil Ansietas", "Hasil Depresi",
     "A1 (Gelisah)", "A2 (Khawatir)", "A3 (Tegang)",
     "B1 (Sedih)", "B2 (Hilang Minat)", "B3 (Lelah)"

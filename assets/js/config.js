@@ -20,6 +20,12 @@ window.FASKES_CONFIG = {
         t += `*Data Pasien:*%0A`;
         t += `\u2022 Nama: ${dataPasien.nama || "-"}%0A`;
         t += `\u2022 NIK: ${dataPasien.nik || "-"}%0A`;
+        if (dataPasien.asalSekolah) {
+            t += `\u2022 Asal Sekolah: ${dataPasien.asalSekolah}%0A`;
+        }
+        if (dataPasien.kelas) {
+            t += `\u2022 Kelas: ${dataPasien.kelas}%0A`;
+        }
         t += `\u2022 Status Kawin: ${dataPasien.statusKawin || "-"}${dataPasien.statusKehamilan ? " (" + dataPasien.statusKehamilan + ")" : ""}%0A`;
         t += `\u2022 Alamat: ${dataPasien.alamat || "-"}%0A%0A`;
         t += `*Hasil Skrining:* *${hasil.ringkasan || "-"}*%0A`;

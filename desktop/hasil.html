@@ -269,6 +269,14 @@
                                 <span class="si-label">NIK</span>
                                 <div class="si-val" x-text="pasien.nik || '-'"></div>
                             </div>
+                            <div class="summary-item" x-show="pasien.asalSekolah">
+                                <span class="si-label">Asal Sekolah</span>
+                                <div class="si-val" x-text="pasien.asalSekolah || '-'"></div>
+                            </div>
+                            <div class="summary-item" x-show="pasien.kelas">
+                                <span class="si-label">Kelas</span>
+                                <div class="si-val" x-text="pasien.kelas || '-'"></div>
+                            </div>
                             <div class="summary-item">
                                 <span class="si-label">Usia Responden</span>
                                 <div class="si-val" x-text="(pasien.usia || '-') + ' Tahun'"></div>

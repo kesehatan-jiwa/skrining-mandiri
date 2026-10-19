@@ -223,6 +223,14 @@
                             <span class="data-key-m">NIK</span>
                             <span class="data-val-m" x-text="dp.nik || '-'"></span>
                         </div>
+                        <div class="data-row-m" x-show="dp.asalSekolah">
+                            <span class="data-key-m">Asal Sekolah</span>
+                            <span class="data-val-m" x-text="dp.asalSekolah"></span>
+                        </div>
+                        <div class="data-row-m" x-show="dp.kelas">
+                            <span class="data-key-m">Kelas</span>
+                            <span class="data-val-m" x-text="dp.kelas"></span>
+                        </div>
                         <div class="data-row-m">
                             <span class="data-key-m">Tanggal Lahir</span>
                             <span class="data-val-m" x-text="(dp.tanggalLahir || '-') + ' (' + (dp.usia || '-') + ' th)'"></span>
