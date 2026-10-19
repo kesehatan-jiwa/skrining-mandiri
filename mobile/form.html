@@ -120,7 +120,7 @@
 
                     <!-- No. WA Orang Tua / Wali (Khusus PHQ-4 & MINDHEAR) -->
                     <div class="form-group-m" x-show="instrumen==='phq4' || instrumen==='mindhear'" x-transition>
-                        <label>No. WhatsApp Orang Tua / Wali</label>
+                        <label>No. WhatsApp Orang Tua / Wali <span style="color:var(--danger)">*</span></label>
                         <input type="tel" x-model="dp.noHpOrtu" placeholder="08xxxxxxxxxx" autocomplete="off">
                         <span class="input-hint">Jika masih sekolah silahkan cantumkan WA orang tua</span>
                     </div>
@@ -419,6 +419,7 @@
                 if (!d.alamat || !d.alamat.trim()) return false;
                 if ((this.instrumen === 'phq4' || this.instrumen === 'mindhear') && (!d.asalSekolah || !d.asalSekolah.trim())) return false;
                 if ((this.instrumen === 'phq4' || this.instrumen === 'mindhear') && (!d.kelas || !d.kelas.trim())) return false;
+                if ((this.instrumen === 'phq4' || this.instrumen === 'mindhear') && (!d.noHpOrtu || !d.noHpOrtu.trim())) return false;
                 if (this.instrumen !== 'mindhear' && !d.statusKawin) return false;
                 if (this.instrumen !== 'epds' && !d.jenisKelamin) return false;
                 if (this.instrumen === 'epds' && !d.statusKehamilan) return false;
@@ -472,6 +473,10 @@
                 }
                 if (!d.noHp || !d.noHp.trim()) {
                     alert('Nomor WhatsApp aktif wajib diisi.');
+                    return;
+                }
+                if ((this.instrumen === 'phq4' || this.instrumen === 'mindhear') && (!d.noHpOrtu || !d.noHpOrtu.trim())) {
+                    alert('Nomor WhatsApp orang tua / wali wajib diisi.');
                     return;
                 }
                 if (this.instrumen === 'epds' && !d.statusKehamilan) {
