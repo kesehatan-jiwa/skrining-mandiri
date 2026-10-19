@@ -118,6 +118,13 @@
                         <input type="tel" x-model="dp.noHp" placeholder="08xxxxxxxxxx" autocomplete="off">
                     </div>
 
+                    <!-- No. WA Orang Tua / Wali (Khusus PHQ-4 & MINDHEAR) -->
+                    <div class="form-group-m" x-show="instrumen==='phq4' || instrumen==='mindhear'" x-transition>
+                        <label>No. WhatsApp Orang Tua / Wali</label>
+                        <input type="tel" x-model="dp.noHpOrtu" placeholder="08xxxxxxxxxx" autocomplete="off">
+                        <span class="input-hint">Jika masih sekolah silahkan cantumkan WA orang tua</span>
+                    </div>
+
                     <!-- Status Kawin -->
                     <div class="form-group-m" x-show="instrumen !== 'mindhear'" x-transition>
                         <label>Status Perkawinan <span style="color:var(--danger)">*</span></label>
@@ -325,7 +332,7 @@
 
             dp: {
                 nama: '', asalSekolah: '', kelas: '', nik: '', tanggalLahir: '', usia: '',
-                jenisKelamin: '', noHp: '', alamat: '',
+                jenisKelamin: '', noHp: '', noHpOrtu: '', alamat: '',
                 statusKawin: '', statusKehamilan: '', namaOrtu: ''
             },
             jawaban: {},

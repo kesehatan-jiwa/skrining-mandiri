@@ -26,8 +26,12 @@ window.FASKES_CONFIG = {
         if (dataPasien.kelas) {
             t += `\u2022 Kelas: ${dataPasien.kelas}%0A`;
         }
-        t += `\u2022 Status Kawin: ${dataPasien.statusKawin || "-"}${dataPasien.statusKehamilan ? " (" + dataPasien.statusKehamilan + ")" : ""}%0A`;
-        t += `\u2022 Alamat: ${dataPasien.alamat || "-"}%0A%0A`;
+        t += `• Status Kawin: ${dataPasien.statusKawin || "-"}${dataPasien.statusKehamilan ? " (" + dataPasien.statusKehamilan + ")" : ""}%0A`;
+        t += `• Alamat: ${dataPasien.alamat || "-"}%0A`;
+        if (dataPasien.noHpOrtu) {
+            t += `• WA Orang Tua: ${dataPasien.noHpOrtu}%0A`;
+        }
+        t += `%0A`;
         t += `*Hasil Skrining:* *${hasil.ringkasan || "-"}*%0A`;
         if (hasil.instrumen === "epds" && hasil.q10Positif) {
             t += `%0A\u26a0\ufe0f *PERHATIAN: Ada indikasi pikiran mencelakai diri \u2014 mohon penanganan segera!*%0A`;

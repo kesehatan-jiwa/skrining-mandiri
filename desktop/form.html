@@ -139,6 +139,13 @@
                             <span class="input-hint">Digunakan petugas faskes untuk tindak lanjut hasil</span>
                         </div>
 
+                        <!-- No. WA Orang Tua / Wali (Khusus PHQ-4 & MINDHEAR) -->
+                        <div class="form-group" x-show="instrumen==='phq4' || instrumen==='mindhear'" x-transition>
+                            <label>No. WhatsApp Orang Tua / Wali</label>
+                            <input type="tel" x-model="dp.noHpOrtu" placeholder="Contoh: 081234567890" autocomplete="off">
+                            <span class="input-hint">Jika masih sekolah silahkan cantumkan WA orang tua</span>
+                        </div>
+
                         <!-- Status Kehamilan / Nifas (KHUSUS EPDS) -->
                         <div class="form-group span-2" x-show="instrumen==='epds'" x-transition>
                             <label>Status Kehamilan / Pasca Persalinan <span class="req">*</span></label>
@@ -382,7 +389,7 @@ function formApp() {
 
         dp: {
             nama: '', asalSekolah: '', kelas: '', nik: '', tanggalLahir: '', usia: '', jenisKelamin: '',
-            noHp: '', alamat: '', statusKawin: '', statusKehamilan: '',
+            noHp: '', noHpOrtu: '', alamat: '', statusKawin: '', statusKehamilan: '',
             namaOrtu: ''
         },
 

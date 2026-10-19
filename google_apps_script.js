@@ -64,6 +64,7 @@ function doPost(e) {
     if (data.asalSekolah) infoSekolahOrtu.push("Sekolah: " + data.asalSekolah);
     if (data.kelas) infoSekolahOrtu.push("Kelas: " + data.kelas);
     if (data.namaOrtu) infoSekolahOrtu.push("Ortu: " + data.namaOrtu);
+    if (data.noHpOrtu) infoSekolahOrtu.push("WA Ortu: " + data.noHpOrtu);
     if (data.calonPengantin) infoSekolahOrtu.push("Catin: " + data.calonPengantin);
     var ketTambahan = infoSekolahOrtu.length > 0 ? infoSekolahOrtu.join(" | ") : "-";
 
